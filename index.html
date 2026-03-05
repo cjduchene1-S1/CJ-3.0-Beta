@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CJ 3.0 Beta — Stryker ASR Agent</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+<script>
+// CJ 3.0 Beta — Data & Knowledge Base
+// All content is based on publicly available information only.
+// This tool does not access Stryker internal systems.
+
+window.CJ_DATA = {
+
+  // ─── TRAINING MODULES ────────────────────────────────────────────────────
+  trainingModules: [
+    {
+      id: 'mod1',
+      title: 'Joint Anatomy & Physiology',
+      icon: '🦴',
+      category: 'Clinical',
+      duration: '45 min',
+      description: 'Understand the structure and function of hip and knee joints, common pathologies, and why replacement is indicated.',
+      content: `The hip is a ball-and-socket joint (femoral head + acetabulum) providing multiaxial motion. The knee is a hinge joint (femoral condyles + tibial plateau + patella) with complex ligamentous support. Osteoarthritis (OA) is the #1 indication for joint replacement — cartilage breakdown leads to bone-on-bone pain, stiffness, and loss of function. Other indications: rheumatoid arthritis, avascular necrosis, post-traumatic arthritis. Understanding patient symptoms and X-ray findings helps you connect clinical need to product solutions.`,
+      videos: [
+        { title: 'Hip Joint Anatomy (Khan Academy)', url: 'https://www.youtube.com/watch?v=LHGbkPl5lsc' },
+        { title: 'Knee Joint Anatomy Overview', url: 'https://www.youtube.com/watch?v=3DlQMNqp_2c' },
+        { title: 'Osteoarthritis Explained', url: 'https://www.youtube.com/watch?v=9EfGR0HHQBE' }
+      ],
+      quiz: [
+        { q: 'The hip joint is classified as what type of joint?', opts: ['Hinge', 'Ball-and-socket', 'Saddle', 'Pivot'], correct: 1, exp: 'The hip is a ball-and-socket joint, allowing multiaxial movement between the femoral head and acetabulum.' },
+        { q: 'What is the most common indication for total joint replacement?', opts: ['Rheumatoid arthritis', 'Fracture', 'Osteoarthritis', 'Gout'], correct: 2, exp: 'Osteoarthritis (cartilage breakdown) is the leading indication for THA and TKA.' },
+        { q: 'Which structure provides primary stability to the knee joint?', opts: ['Meniscus', 'ACL/PCL + collateral ligaments', 'Patella', 'Bursa'], correct: 1, exp: 'The cruciate and collateral ligaments are the primary stabilizers of the knee.' },
+        { q: 'Avascular necrosis (AVN) refers to:', opts: ['Bone infection', 'Death of bone tissue due to loss of blood supply', 'Cartilage overgrowth', 'Nerve damage'], correct: 1, exp: 'AVN occurs when blood supply to bone is disrupted, causing bone death — a common indication for hip replacement.' },
+        { q: 'The medial compartment of the knee is located:', opts: ['Toward the outside of the leg', 'Toward the inside (big-toe side)', 'Behind the knee', 'Above the patella'], correct: 1, exp: 'Medial = toward midline of the body; medial compartment OA is the most common type.' },
+        { q: 'Which of the following is NOT a typical symptom of end-stage knee OA?', opts: ['Night pain', 'Crepitus', 'Increased range of motion', 'Stiffness after rest'], correct: 2, exp: 'End-stage OA typically causes decreased ROM, not increased, due to bone spurs and joint space loss.' }
+      ]
+    },
+    {
+      id: 'mod2',
+      title: 'Mako SmartRobotics System',
+      icon: '🤖',
+      category: 'Technology',
+      duration: '60 min',
+      description: 'Deep dive into Mako robotic-arm technology — how it works, its clinical benefits, and how to position it with surgeons.',
+      content: `Mako SmartRobotics (Stryker) uses CT-based 3D planning and a robotic arm to guide surgeons through joint replacement with precision. Key components: (1) CT scan → 3D patient-specific model, (2) Pre-op plan reviewed with surgeon, (3) Intraoperative robotic arm with haptic feedback boundaries ("AccuStop"), (4) Real-time data on bone resection and implant positioning. Approved for partial knee (PKA), total knee (TKA), and total hip (THA). Published clinical data shows improved accuracy of implant placement vs. manual technique. Your role: help schedule planning appointments, ensure CT protocol compliance, support surgeon in OR.`,
+      videos: [
+        { title: 'Mako SmartRobotics Overview (Stryker Official)', url: 'https://www.youtube.com/watch?v=7u7Z0JvfCqE' },
+        { title: 'How Robotic Surgery Works', url: 'https://www.youtube.com/watch?v=AE5dUqAzJ7c' },
+        { title: 'Mako Total Knee — Patient Perspective', url: 'https://www.youtube.com/results?search_query=mako+robotic+total+knee+stryker' }
+      ],
+      quiz: [
+        { q: 'What imaging modality is used for Mako pre-operative planning?', opts: ['MRI', 'X-ray only', 'CT scan', 'Ultrasound'], correct: 2, exp: 'Mako uses CT scans to create a 3D patient-specific model for pre-op planning.' },
+        { q: 'What does "AccuStop" technology do?', opts: ['Controls the robot speed', 'Creates haptic boundaries to prevent over-resection', 'Cleans the implant', 'Tracks blood loss'], correct: 1, exp: 'AccuStop uses haptic (force) feedback to keep the saw blade within planned bone boundaries.' },
+        { q: 'Mako is FDA-cleared for which procedures?', opts: ['PKA only', 'TKA only', 'PKA, TKA, and THA', 'THA and TKA only'], correct: 2, exp: 'Mako is cleared for partial knee arthroplasty, total knee arthroplasty, and total hip arthroplasty.' },
+        { q: 'What is your primary role during a Mako case as an ASR?', opts: ['Operate the robotic arm', 'Make implant selection decisions', 'Support surgeon, manage implant/instrument logistics, ensure workflow', 'Read CT scan'], correct: 2, exp: 'As an ASR you support the surgeon, manage instruments/implants, and help ensure the workflow runs smoothly.' },
+        { q: 'A surgeon objecting to Mako because "it takes longer" should be addressed by:', opts: ['Agreeing and moving on', 'Sharing learning curve data showing time improves with experience', 'Dismissing the concern', 'Offering a discount'], correct: 1, exp: 'Published data shows OR time normalizes after the learning curve. Address with data and surgeon testimonials.' },
+        { q: 'The 3D plan created before a Mako case is called:', opts: ['Surgical blueprint', 'RIO plan', 'Pre-operative plan / patient-specific plan', 'CT report'], correct: 2, exp: 'Each patient gets a customized pre-operative plan reviewed by the surgeon before the case.' }
+      ]
+    },
+    {
+      id: 'mod3',
+      title: 'Total Hip Arthroplasty (THA)',
+      icon: '🦿',
+      category: 'Clinical',
+      duration: '50 min',
+      description: 'Understand the THA procedure, implant components, surgical approaches, and your role in the OR.',
+      content: `THA replaces the femoral head and acetabular surface. Main components: (1) Acetabular cup (shell + liner), (2) Femoral stem + femoral head. Common approaches: posterior (most common), anterolateral, direct anterior (DAA — growing in popularity). Implant fixation: cementless (press-fit, most common today) vs cemented. Key metrics: leg length equality, offset, cup position (inclination ~40°, anteversion ~15-20°). Your OR role: know implant sizes, have backup available, track trial/final implants, maintain sterile technique awareness, anticipate surgeon needs.`,
+      videos: [
+        { title: 'Total Hip Replacement Surgery Overview', url: 'https://www.youtube.com/watch?v=0KAF0OFX4zI' },
+        { title: 'Hip Replacement Implant Components', url: 'https://www.youtube.com/watch?v=TkSJ4kPiAGE' }
+      ],
+      quiz: [
+        { q: 'Which of the following is NOT a component of a total hip arthroplasty?', opts: ['Acetabular shell', 'Femoral stem', 'Tibial tray', 'Femoral head'], correct: 2, exp: 'The tibial tray is a knee component. THA includes the cup shell, liner, femoral stem, and femoral head.' },
+        { q: 'The direct anterior approach (DAA) is notable because:', opts: ['It is the most common approach', 'It avoids cutting major muscle groups', 'It requires the longest recovery', 'It is only used for revisions'], correct: 1, exp: 'DAA goes between muscle planes rather than cutting them, potentially enabling faster recovery.' },
+        { q: 'Ideal acetabular cup inclination is approximately:', opts: ['10-15°', '20-25°', '40°', '60°'], correct: 2, exp: 'The "safe zone" for cup inclination is approximately 40° (±10°) to reduce impingement and dislocation risk.' },
+        { q: 'Press-fit fixation means:', opts: ['Using cement', 'Screwing the implant in', 'Impacting the implant so bone grows onto its surface', 'Gluing with adhesive'], correct: 2, exp: 'Cementless/press-fit implants are coated with porous material that allows bone ingrowth for long-term fixation.' },
+        { q: 'As an ASR during a THA, you should:', opts: ['Stand as close to the field as possible', 'Know the implant sizes and have backups ready', 'Ask the surgeon questions during critical steps', 'Leave the room during incision'], correct: 1, exp: 'Anticipating needs — knowing sizes, having backups, being ready with instruments — is key to OR support.' },
+        { q: 'Leg length discrepancy after THA is most commonly caused by:', opts: ['Wrong implant material', 'Incorrect stem seating or head length selection', 'Patient weight', 'Anesthesia type'], correct: 1, exp: 'Improper stem seating or wrong femoral head length selection can cause leg length changes post-op.' }
+      ]
+    },
+    {
+      id: 'mod4',
+      title: 'Total Knee Arthroplasty (TKA)',
+      icon: '🦾',
+      category: 'Clinical',
+      duration: '50 min',
+      description: 'Learn TKA procedure steps, implant components, and your responsibilities during knee replacement cases.',
+      content: `TKA replaces femoral condyles, tibial plateau, and often the patellar surface. Components: (1) Femoral component, (2) Tibial tray + polyethylene insert, (3) Patellar button (if resurfaced). Key surgical goals: correct alignment (mechanical axis), balanced flexion/extension gaps, appropriate ligament tension. CR (cruciate-retaining) vs PS (posterior-stabilized) designs — PS sacrifices PCL, uses post/cam mechanism. Fixed vs mobile bearing inserts. Your role: organize instrument trays in correct order, know sizing, track trialing, document lot numbers, communicate with scrub tech.`,
+      videos: [
+        { title: 'Total Knee Replacement Surgery', url: 'https://www.youtube.com/watch?v=FLKyMNIkVGk' },
+        { title: 'Knee Replacement Components Explained', url: 'https://www.youtube.com/watch?v=ZHGQtSGx7pQ' }
+      ],
+      quiz: [
+        { q: 'In a CR (cruciate-retaining) TKA, which ligament is preserved?', opts: ['ACL', 'PCL', 'MCL', 'LCL'], correct: 1, exp: 'CR implants retain the posterior cruciate ligament (PCL), relying on it for rollback and stability.' },
+        { q: 'The polyethylene insert in TKA sits between:', opts: ['The femoral component and the patella', 'The tibial tray and the femoral component', 'The tibia and the femur directly', 'The patella and the tibial tray'], correct: 1, exp: 'The poly insert articulates between the tibial tray (below) and the femoral component (above).' },
+        { q: 'Proper alignment in TKA is measured along:', opts: ['The anatomic axis', 'The mechanical axis', 'The sagittal plane only', 'The patient\'s height'], correct: 1, exp: 'Mechanical axis (from femoral head center to ankle center) should pass through the knee to reduce wear.' },
+        { q: 'A PS (posterior-stabilized) TKA differs from CR by:', opts: ['Having no tibial component', 'Using a post and cam instead of the PCL', 'Being smaller in size', 'Requiring no polyethylene'], correct: 1, exp: 'PS designs sacrifice the PCL and use a tibial post/femoral cam mechanism for posterior stability.' },
+        { q: 'Lot number documentation in the OR is important because:', opts: ['Surgeons require it for payment', 'It enables product tracking and recall notification if needed', 'It is optional', 'It only applies to instruments'], correct: 1, exp: 'Lot/serial number tracking is FDA-required for implantable devices and enables traceability.' },
+        { q: 'Gap balancing in TKA refers to:', opts: ['Matching implant sizes between left and right', 'Ensuring equal flexion and extension gaps with proper ligament tension', 'Balancing blood loss', 'Sizing the femoral component'], correct: 1, exp: 'Surgeons balance flexion/extension gaps to ensure the knee is stable and moves properly throughout range of motion.' }
+      ]
+    },
+    {
+      id: 'mod5',
+      title: 'Partial Knee Replacement (PKA)',
+      icon: '⚙️',
+      category: 'Clinical',
+      duration: '35 min',
+      description: 'Understand unicompartmental and patellofemoral partial knee replacement — indications, advantages, and Mako\'s role.',
+      content: `PKA replaces only the damaged compartment of the knee (medial, lateral, or patellofemoral) rather than the entire joint. Advantages: preserves natural ligaments, less bone removal, faster recovery, more natural feel. Key indication: isolated compartmental OA with intact ACL, stable ligaments, and reasonable BMI. Mako excels here — robotic precision ensures accurate component placement in a smaller surgical footprint. Medial PKA is most common. Contraindicated in inflammatory arthritis, severe deformity, or multi-compartment disease.`,
+      videos: [
+        { title: 'Partial Knee Replacement vs Total', url: 'https://www.youtube.com/watch?v=sAW0qKSBDbc' },
+        { title: 'Mako Partial Knee Overview', url: 'https://www.youtube.com/results?search_query=mako+partial+knee+stryker+robot' }
+      ],
+      quiz: [
+        { q: 'PKA is indicated when:', opts: ['All three compartments are damaged', 'Only one compartment shows significant disease with intact ACL', 'The patient is very young and active', 'The patient has rheumatoid arthritis'], correct: 1, exp: 'PKA requires isolated compartmental disease — typically medial — with intact ACL and no inflammatory arthritis.' },
+        { q: 'Which compartment is most commonly replaced in PKA?', opts: ['Lateral', 'Patellofemoral', 'Medial', 'All equally'], correct: 2, exp: 'Medial compartment OA is the most common presentation, making medial PKA the most frequent procedure.' },
+        { q: 'A key advantage of PKA over TKA is:', opts: ['It is less expensive', 'It preserves natural ligaments and removes less bone', 'It lasts longer', 'It requires no anesthesia'], correct: 1, exp: 'PKA preserves the ACL, PCL, and other compartments, often resulting in a more natural feel and faster recovery.' },
+        { q: 'Mako is particularly valuable for PKA because:', opts: ['It eliminates the need for a surgeon', 'Its precision helps accurately place a smaller implant in a confined space', 'It is cheaper than manual technique', 'PKA can only be done with Mako'], correct: 1, exp: 'Robotic precision is especially valuable in PKA where accurate positioning in a small area is critical.' },
+        { q: 'Which finding would CONTRAINDICATE a patient for PKA?', opts: ['Age 65', 'BMI 28', 'Intact ACL', 'Inflammatory arthritis'], correct: 3, exp: 'Inflammatory arthritis (RA, etc.) causes multi-compartment disease and contraindicates single-compartment replacement.' }
+      ]
+    },
+    {
+      id: 'mod6',
+      title: 'OR Navigation & Professional Conduct',
+      icon: '🏥',
+      category: 'Professional',
+      duration: '40 min',
+      description: 'Master OR etiquette, sterile field rules, surgical team dynamics, and your professional responsibilities as a sales rep.',
+      content: `The OR is a sterile, high-stakes environment. Rules: (1) Never break the sterile field, (2) Scrub in only when properly certified/credentialed, (3) Speak only when necessary during critical steps, (4) Anticipate — don't wait to be asked, (5) Know where everything is before the case starts, (6) Dress code: scrubs, shoe covers, hair cover, mask. Surgical team: Attending surgeon, resident/fellow, scrub tech (sterile field), circulating nurse (outside), anesthesiologist, OR coordinator. Your relationship with the scrub tech and circulating nurse is crucial — they influence surgeon preferences and can make your job easier or harder. Arrive 30-45 min before case. Have a complete instrument/implant count. Follow hospital-specific policies.`,
+      videos: [
+        { title: 'OR Etiquette for Medical Device Reps', url: 'https://www.youtube.com/results?search_query=operating+room+etiquette+medical+device+rep' },
+        { title: 'Sterile Field Basics', url: 'https://www.youtube.com/watch?v=QxXmn8_sCGQ' }
+      ],
+      quiz: [
+        { q: 'You should arrive before a case to:', opts: ['Watch the preceding surgery', 'Set up instruments, confirm implant sizes, and prepare for the case', 'Socialize with staff', 'Wait outside until called'], correct: 1, exp: 'Arriving 30-45 min early lets you set up and be ready — showing professionalism and reducing delays.' },
+        { q: 'If you accidentally contaminate the sterile field:', opts: ['Pretend it did not happen', 'Immediately notify the scrub tech or surgeon', 'Quickly move something to cover it', 'Leave the room'], correct: 1, exp: 'Always report contamination immediately — patient safety is paramount, and cover-ups are never acceptable.' },
+        { q: 'Who manages supplies from OUTSIDE the sterile field?', opts: ['Scrub tech', 'Surgeon', 'Circulating nurse', 'Anesthesiologist'], correct: 2, exp: 'The circulating (circulator) nurse works outside the sterile field and passes items in from outside.' },
+        { q: 'Building a strong relationship with OR staff (nurses, scrub techs) is important because:', opts: ['They make purchasing decisions', 'They influence surgeon opinion and can ease your access and workflow', 'It is required by law', 'They control scheduling only'], correct: 1, exp: 'OR staff relationships are foundational — they influence surgeon preferences and daily case success.' },
+        { q: 'During a critical surgical step, you should:', opts: ['Ask about scheduling next case', 'Stay quiet and observe unless specifically asked something', 'Check your phone quickly', 'Offer suggestions to the surgeon'], correct: 1, exp: 'Silence during critical moments shows respect and professionalism; speak only when necessary or asked.' },
+        { q: 'Hospital credentialing before entering the OR is:', opts: ['Optional for sales reps', 'Required — you cannot enter the OR without it', 'Only needed for management reps', 'Only needed for first visit'], correct: 1, exp: 'Every facility requires vendor credentialing compliance (Reptrax, Vendormate, etc.) before OR access.' }
+      ]
+    },
+    {
+      id: 'mod7',
+      title: 'Sales Excellence & Consultative Selling',
+      icon: '💼',
+      category: 'Sales',
+      duration: '55 min',
+      description: 'Learn the consultative sales framework, value selling, objection handling, and building surgeon partnerships.',
+      content: `Consultative selling = understanding the customer\'s needs first, then positioning solutions. Framework: (1) Research — know your surgeon, their practice, their patient mix, (2) Open — earn the right to a conversation, (3) Discover — ask clinical and business questions, (4) Present — tie your solution to their specific need, (5) Handle objections — acknowledge, clarify, respond, confirm, (6) Close — ask for the business / next step, (7) Follow through — delivery, in-service, outcome tracking. Common objections in ortho: "We\'re happy with our current vendor," "Price is too high," "I don\'t want to change," "Mako takes too long." Your value = clinical support + reliability + education + problem solving. Track every interaction.`,
+      videos: [
+        { title: 'Consultative Selling Skills', url: 'https://www.youtube.com/watch?v=Wr0UIIr3-KY' },
+        { title: 'Handling Sales Objections', url: 'https://www.youtube.com/watch?v=kijvlK0dXQg' },
+        { title: 'Medical Device Sales Tips', url: 'https://www.youtube.com/results?search_query=medical+device+sales+tips+ortho' }
+      ],
+      quiz: [
+        { q: 'In consultative selling, the FIRST priority is:', opts: ['Pitching your product', 'Understanding the customer\'s specific needs', 'Discussing price', 'Scheduling a demo'], correct: 1, exp: 'Consultative selling starts with understanding — ask before presenting so your solution is relevant.' },
+        { q: 'When a surgeon says "We\'re happy with our current vendor," you should:', opts: ['Accept and leave', 'Acknowledge their loyalty, then ask what "ideal" looks like to uncover gaps', 'Immediately pitch price', 'Criticize the competitor'], correct: 1, exp: 'Acknowledge the relationship, then ask open-ended questions to discover unmet needs or opportunities.' },
+        { q: 'The best close in surgical sales is:', opts: ['A hard pressure close', 'Asking for a specific next step (trial case, surgeon meeting, in-service)', 'Offering the biggest discount', 'Waiting for them to call you'], correct: 1, exp: 'In surgical sales, the "close" is often asking for a specific next step — a trial, a meeting, a case.' },
+        { q: 'What is the most valuable thing you can provide a surgeon beyond product?', opts: ['Free lunches', 'Reliability, clinical expertise, and problem-solving', 'Golf outings', 'Bigger instrument sets'], correct: 1, exp: 'Surgeons value reps who are reliable, knowledgeable, and solve problems — this builds lasting partnerships.' },
+        { q: 'Tracking every sales interaction is important because:', opts: ['Your manager requires it', 'It helps identify patterns, follow-up opportunities, and account trends', 'It is not necessary if you have good memory', 'Only applies to new accounts'], correct: 1, exp: 'Consistent tracking reveals account patterns, ensures timely follow-up, and documents your pipeline.' },
+        { q: 'A surgeon\'s key influencers (who can support or block your access) include:', opts: ['Only the surgeon', 'OR staff, office manager, scheduler, and hospital administration', 'Only hospital administration', 'Only the scrub tech'], correct: 1, exp: 'Success requires building relationships across the care team — not just the surgeon.' }
+      ]
+    },
+    {
+      id: 'mod8',
+      title: 'Territory Management & Account Planning',
+      icon: '🗺️',
+      category: 'Sales',
+      duration: '45 min',
+      description: 'Strategically manage your North Texas territory — prioritizing accounts, planning your week, and growing market share.',
+      content: `Territory management = maximizing ROI on your time and effort. Account tiers: Tier 1 (high volume, current business — protect & grow), Tier 2 (medium volume, opportunity accounts — develop), Tier 3 (low volume or competitive — target selectively). Weekly planning: Monday prep (review schedule, prep cases), Tue-Thu (case coverage + office visits), Friday (admin, follow-up, planning). Key metrics: cases per week, new surgeon meetings, Mako utilization, conversion rate. North Texas market: large market with significant hospital systems (HCA, Baylor Scott & White, Methodist, UT Southwestern, Texas Health). Focus on Mako-enabled facilities and surgeons open to robotic adoption.`,
+      videos: [
+        { title: 'Territory Management for Sales Reps', url: 'https://www.youtube.com/watch?v=zIGcEHHcYnE' },
+        { title: 'Account Prioritization Strategies', url: 'https://www.youtube.com/results?search_query=sales+territory+management+account+planning' }
+      ],
+      quiz: [
+        { q: 'A Tier 1 account should receive:', opts: ['Minimal attention since it\'s already won', 'The most attention — protect and grow existing business', 'Only quarterly check-ins', 'Price discounts only'], correct: 1, exp: 'Tier 1 accounts drive your current revenue — protecting them while growing share is the top priority.' },
+        { q: 'The best time for office calls on surgeon\'s practice staff is:', opts: ['During surgery', 'Between cases or mid-morning when traffic is lighter', 'Only by appointment', 'Early morning before clinic starts'], correct: 1, exp: 'Mid-morning between cases (9-11 AM) is often the best window — surgeons are accessible and staff less rushed.' },
+        { q: 'Mako utilization rate measures:', opts: ['Number of Mako machines sold', 'Percentage of eligible cases performed with Mako vs. total cases', 'How often the robot is serviced', 'Surgeon satisfaction scores'], correct: 1, exp: 'Utilization rate = Mako cases / total possible Mako cases. Increasing this is a key growth metric.' },
+        { q: 'If a competitor is dominant in an account, your first step should be:', opts: ['Give up on the account', 'Research the account deeply — find unmet needs, unconvinced surgeons, staff relationships', 'Immediately offer price matching', 'Report to your manager'], correct: 1, exp: 'Competitive accounts require research: find the weakest link, one open surgeon, or an unmet clinical need.' },
+        { q: 'North Texas is considered a high-opportunity market because:', opts: ['There are no competitors', 'It is one of the fastest-growing regions in the US with large hospital systems and high procedure volume', 'Stryker gives it extra discounts', 'Surgeons there are less brand-loyal'], correct: 1, exp: 'North Texas has massive population growth, major healthcare systems, and high joint replacement volume.' }
+      ]
+    },
+    {
+      id: 'mod9',
+      title: 'Hospital Credentialing 101',
+      icon: '📋',
+      category: 'Operations',
+      duration: '30 min',
+      description: 'Navigate vendor credentialing requirements — Reptrax, Vendormate, Intellicentrics — and keep your access current.',
+      content: `Credentialing is non-negotiable — you cannot enter an OR without it. Major platforms: Reptrax (formerly Symplr), Vendormate (GHX), Intellicentrics (shared credentialing for Texas). Typical requirements: background check, drug screen, immunization records (flu, Hep B, MMR, TB/PPD), insurance certificate, product training certificates, HIPAA training, surgical observation training. Each hospital may add facility-specific requirements. Expirations: annual immunizations, background check (varies), insurance (annual). Set reminders 60 days before expiration. Keep digital copies of all documents. Missing credentialing = missing cases = losing business.`,
+      videos: [
+        { title: 'Vendor Credentialing Overview', url: 'https://www.youtube.com/results?search_query=hospital+vendor+credentialing+medical+device+rep' },
+        { title: 'Reptrax/Symplr Platform Guide', url: 'https://www.youtube.com/results?search_query=reptrax+symplr+vendor+credentialing' }
+      ],
+      quiz: [
+        { q: 'If your Reptrax profile shows "Non-Compliant," you:', opts: ['Can still enter the OR if you explain it to the nurse', 'Cannot enter the facility until compliance is restored', 'Only need to show your Stryker badge', 'Can ask your manager to get you in'], correct: 1, exp: 'Non-compliant status = no OR access. Restoring compliance must be your top priority.' },
+        { q: 'Which document commonly expires annually and must be renewed for most facilities?', opts: ['Background check', 'Flu vaccine/immunization records', 'Your driver\'s license', 'Business card'], correct: 1, exp: 'Flu vaccines and many immunization records have annual renewal requirements for hospital access.' },
+        { q: 'How far in advance should you set document expiration reminders?', opts: ['1 week before', 'The day they expire', '60 days before expiration', 'After they expire'], correct: 2, exp: '60 days gives you time to schedule appointments and process renewals without losing OR access.' },
+        { q: 'Intellicentrics is particularly important in Texas because:', opts: ['It is the only platform in Texas', 'Many Texas health systems use it for shared vendor credentialing', 'It is mandatory by Texas law', 'Only Stryker uses it'], correct: 1, exp: 'Many Texas hospital systems participate in the Intellicentrics network for shared credentialing management.' },
+        { q: 'The best practice for managing credential documents is:', opts: ['Keep paper copies only', 'Store digital copies in a secure, organized system with expiration tracking', 'Only rely on the platform to track everything', 'Ask your manager to manage them'], correct: 1, exp: 'Proactively managing your own documents — with digital backups and personal reminders — prevents lapses.' }
+      ]
+    },
+    {
+      id: 'mod10',
+      title: 'Competitive Intelligence',
+      icon: '🔍',
+      category: 'Sales',
+      duration: '40 min',
+      description: 'Understand the orthopedic competitive landscape and position Stryker\'s strengths effectively.',
+      content: `Key competitors in joint replacement: Zimmer Biomet, DePuy Synthes (J&J), Smith+Nephew, Exactech. Each has their own robotic platform (e.g., Rosa by Zimmer, Velys by DePuy, Cori by Smith+Nephew). Stryker differentiators: Mako has the longest market presence and most published clinical data in robotics; large instrument/implant portfolio; strong OR support reputation; Triathlon (knee) and Accolade/Trident (hip) systems. Strategy: don't disparage competitors — instead, highlight your strengths and ask questions that reveal where competitors fall short. Know which accounts use which competitors and tailor your approach. Clinical data and outcome studies are your most powerful tool.`,
+      videos: [
+        { title: 'How to Handle Competitive Situations in Sales', url: 'https://www.youtube.com/results?search_query=competitive+sales+strategy+medical+device' }
+      ],
+      quiz: [
+        { q: 'When a surgeon brings up a competitor, the best response is:', opts: ['Criticize the competitor directly', 'Acknowledge their point, then ask questions and pivot to your strengths with data', 'Change the subject', 'Agree that the competitor is good too'], correct: 1, exp: 'Never disparage competitors — acknowledge, ask, and use data to highlight your differentiation.' },
+        { q: 'Stryker\'s robotic platform is called:', opts: ['Rosa', 'Velys', 'Mako', 'Cori'], correct: 2, exp: 'Mako SmartRobotics is Stryker\'s proprietary robotic-arm platform for joint replacement.' },
+        { q: 'The most credible tool for competitive differentiation is:', opts: ['Price discounts', 'Peer-reviewed clinical studies and outcome data', 'Surgeon testimonials only', 'Bigger instrument sets'], correct: 1, exp: 'Published clinical data is objective and credible — it\'s the foundation of evidence-based selling.' },
+        { q: 'Understanding what competitor implants a surgeon uses helps you:', opts: ['Do nothing different', 'Tailor your approach, identify vulnerabilities, and target the right message', 'Avoid those surgeons', 'Match their pricing exactly'], correct: 1, exp: 'Knowing a surgeon\'s current system lets you frame your pitch around specific gaps or opportunities.' }
+      ]
+    }
+  ],
+
+  // ─── DAILY REPORT TEMPLATES ─────────────────────────────────────────────
+  reportTemplates: [
+    {
+      day: 0, // Sunday
+      focus: 'Weekly Planning & Reflection',
+      makoHighlight: 'Mako Utilization Review: Identify your top Mako cases scheduled this week and confirm CT plans are uploaded and surgeon-reviewed. Early planning = fewer day-of disruptions.',
+      marketInsight: 'Joint replacement procedure volumes in North Texas continue to outpace national averages, driven by population growth in DFW suburbs and the aging 60-75 demographic cohort.',
+      territory: 'Sunday is ideal for reviewing your account list, prioritizing Tier 1 visits for the week, and preparing your weekly manager report. Which accounts need attention this week?',
+      action: ['Send weekly manager report to Cody Crocker & Chanel Derr', 'Review all scheduled cases for the week', 'Update CRM with Friday follow-up notes', 'Check credentialing status for all facilities this week']
+    },
+    {
+      day: 1, // Monday
+      focus: 'Case Preparation & Weekly Launch',
+      makoHighlight: 'Mako Pre-op Verification: Confirm all CT scans for this week\'s Mako cases are uploaded to the planning software. Missing scans = case delays. Be the one who catches it first.',
+      marketInsight: 'Robotic-assisted joint replacement is growing at ~15% annually. Surgeons who adopt Mako early in their practice see higher patient volume from patients specifically requesting robotic surgery.',
+      territory: 'North Texas has significant activity in the I-35 corridor. Target hospital systems in the Plano, Frisco, and McKinney area for Tier 2 conversion — these markets are growing rapidly.',
+      action: ['Confirm case schedule for the week', 'Pre-pull instrument trays if possible', 'Send Monday morning check-in to key OR contacts', 'Update weekly targets in CRM']
+    },
+    {
+      day: 2, // Tuesday
+      focus: 'Clinical Excellence Day',
+      makoHighlight: 'Mako Talk Track: "The data shows patients actively search for robotic surgery options. Surgeons with Mako in their profile see measurable increases in new patient inquiries." Use this with fence-sitters.',
+      marketInsight: 'Patient awareness of robotic surgery has increased significantly post-pandemic. Consumer-facing marketing (like Stryker\'s "Make Your Move" campaign) is driving patients to ask their PCPs for Mako surgeons.',
+      territory: 'Dallas-area independent surgery centers are increasingly interested in robotic capabilities. Identify any ASCs in your territory pursuing Mako installation — get involved early.',
+      action: ['Cover all scheduled OR cases with precision', 'Visit one new surgeon office today', 'Follow up on any open instrument/tray issues', 'Log all OR interactions in CRM']
+    },
+    {
+      day: 3, // Wednesday
+      focus: 'Relationship Building & Pipeline',
+      makoHighlight: 'Mako Conversion Strategy: Identify 1-2 high-volume surgeons in your territory who are NOT currently using Mako. Research their current case mix. Schedule a lunch-and-learn this week.',
+      marketInsight: 'Health system consolidation in Texas is accelerating — knowing which independent hospitals are joining larger systems (BSW, HCA, Methodist) helps you navigate contract changes ahead of them.',
+      territory: 'Wednesday is ideal for hospital admin meetings. Schedule time with OR directors, supply chain contacts, or physician relations teams to understand purchasing calendars.',
+      action: ['Schedule a Mako education event', 'Connect with 2 new OR staff members', 'Update pipeline in CRM', 'Review competitor activity in top accounts']
+    },
+    {
+      day: 4, // Thursday
+      focus: 'Mako Expansion Day',
+      makoHighlight: 'Clinical Data Ammunition: The published literature on Mako shows statistically significant improvements in implant positioning accuracy vs. manual technique. Have 2-3 study references ready when surgeons ask for evidence.',
+      marketInsight: 'CMS and commercial payers are increasingly linking reimbursement to patient outcomes. Robotic surgery\'s documented precision improvements position it favorably in value-based care conversations.',
+      territory: 'Fort Worth/Tarrant County is a strong growth area. Identify your key accounts west of I-35 and ensure you\'re getting adequate time there — don\'t let geography create gaps in coverage.',
+      action: ['Drop in at a key account unannounced (after confirming OR schedule)', 'Review literature folder — add 1 new study reference', 'Follow up on any Mako trial commitments', 'Send thank-you notes to OR staff who helped this week']
+    },
+    {
+      day: 5, // Friday
+      focus: 'Admin, Follow-Up & Planning',
+      makoHighlight: 'End-of-Week Mako Metric: How many Mako cases did you cover this week? What was the utilization rate at each facility? Note any friction points to discuss with your team or manager.',
+      marketInsight: 'Hospital supply chain teams are focused on cost reduction. Frame your conversations around total cost of care (Mako\'s precision reduces revision rates) rather than just purchase price.',
+      territory: 'Friday afternoon is excellent for surgeon office cold calls — practices are often less hectic, and a brief drop-in with lunch or snacks can open doors that cold calls cannot.',
+      action: ['Complete all CRM updates for the week', 'Document case notes and outcomes', 'Draft Sunday manager report outline', 'Set goals and schedule for next week']
+    },
+    {
+      day: 6, // Saturday
+      focus: 'Professional Development Day',
+      makoHighlight: 'Weekend Study: Review one Mako clinical paper or attend a Stryker online training module. Top performers in medical device sales dedicate at least 2 hours per week to product/clinical education.',
+      marketInsight: 'The US orthopedic market is projected to reach $8B+ in joint replacement by 2028. North Texas, as one of the fastest-growing metro areas, represents a disproportionate share of growth.',
+      territory: 'Use Saturdays to research target accounts online — hospital websites, surgeon profiles, and LinkedIn can reveal procedure volumes, specialties, and relationship networks.',
+      action: ['Complete one training module or quiz', 'Research 2 new target surgeons on LinkedIn', 'Review credential expirations for next month', 'Rest and recharge for next week']
+    }
+  ],
+
+  // ─── CHATBOT KNOWLEDGE BASE ──────────────────────────────────────────────
+  chatKnowledge: [
+    { keys: ['mako', 'robot', 'robotic'], response: 'Mako SmartRobotics uses CT-based 3D planning + a haptic-guided robotic arm to assist surgeons in joint replacement. It\'s FDA-cleared for PKA, TKA, and THA. Your role: ensure CT scans are planned before cases, support intraoperative workflow, and help grow utilization at Mako-enabled facilities. Key talk track: precision, personalized planning, and patient outcomes data.' },
+    { keys: ['credential', 'credentialing', 'reptrax', 'vendormate', 'intellicentrics', 'compliance'], response: 'Hospital credentialing is mandatory for OR access. Key platforms in North Texas: Reptrax (Symplr), Vendormate, and Intellicentrics. Required documents usually include: background check, drug screen, immunization records (flu, Hep B, MMR, TB), HIPAA training, liability insurance certificate, and product training certs. Set 60-day renewal reminders and keep digital backups of all documents.' },
+    { keys: ['tha', 'total hip', 'hip replacement', 'hip'], response: 'THA components: acetabular shell + liner, femoral stem, femoral head. Common approaches: posterior (most common), anterolateral, direct anterior (DAA). Your OR role: know implant sizes, have backup trays ready, track lot numbers, anticipate surgeon needs. Key metrics surgeons care about: leg length equality, cup inclination (~40°), and offset restoration.' },
+    { keys: ['tka', 'total knee', 'knee replacement', 'knee'], response: 'TKA replaces femoral condyles, tibial plateau, and optionally the patella. Components: femoral component, tibial tray, poly insert, ± patellar button. CR vs PS design difference: CR retains PCL; PS uses post/cam mechanism. Your role: organize trays in order, know sizing, track trialing, document lot numbers. Goal: proper alignment along the mechanical axis with balanced gaps.' },
+    { keys: ['partial knee', 'pka', 'unicompartmental', 'uni'], response: 'PKA (partial knee arthroplasty) replaces only the damaged compartment — most commonly medial. Indication: isolated compartmental OA with intact ACL. Advantages over TKA: preserves natural ligaments, less bone removal, often faster recovery. Mako is especially valuable for PKA due to the precision required for a smaller implant in a confined space.' },
+    { keys: ['objection', 'objections', 'pushback', 'competing', 'competitor'], response: 'Common objections and responses: (1) "Happy with current vendor" → Acknowledge, then ask "What would ideal look like?" (2) "Mako takes too long" → Share learning curve data — times normalize quickly. (3) "Price is too high" → Pivot to total cost of care; Mako reduces revisions. (4) "Don\'t want to change" → Ask about their biggest OR frustration and tie Mako to solving it. Never badmouth competitors — use data instead.' },
+    { keys: ['territory', 'dallas', 'north texas', 'dfw', 'market'], response: 'North Texas is one of the fastest-growing healthcare markets in the US. Key health systems: HCA, Baylor Scott & White, Methodist, UT Southwestern, Texas Health Resources. DFW suburbs (Plano, Frisco, McKinney, Allen, Mansfield) are high-growth targets. Tier your accounts: Tier 1 (protect), Tier 2 (grow), Tier 3 (target). Focus Mako conversations at facilities with the robot installed but underutilizing it.' },
+    { keys: ['manager', 'report', 'cody', 'chanel', 'weekly report'], response: 'Your weekly manager report to Cody Crocker and Chanel Derr should include: (1) Cases covered this week + key wins, (2) New surgeon/admin contacts made, (3) Mako utilization updates, (4) Pipeline/opportunities, (5) Challenges needing support, (6) Ideas for Mako growth in the territory. Send every Sunday. Be concise, data-driven, and proactive about requesting help when needed.' },
+    { keys: ['scrub tech', 'or staff', 'nurse', 'circulator', 'or etiquette'], response: 'Building strong OR staff relationships is as important as surgeon relationships. Tips: (1) Learn everyone\'s name and use it, (2) Bring food/snacks occasionally, (3) Help where appropriate without stepping on toes, (4) Respect the hierarchy, (5) Be reliable — if you say you\'ll do something, do it. The scrub tech and circulator influence surgeon preferences and your OR access.' },
+    { keys: ['first 6 months', 'new rep', 'onboarding', 'success'], response: 'First 6-month blueprint: Month 1 — complete credentialing at all facilities, learn product line, shadow cases. Month 2 — begin supporting cases independently, build OR relationships. Month 3 — start independent case coverage, identify Mako growth opportunities. Month 4 — expand surgeon contacts, begin consultative sales calls. Month 5 — drive measurable territory growth. Month 6 — full territory management, performance review prep. Track every interaction in CRM.' },
+    { keys: ['study', 'learn', 'training', 'module', 'quiz'], response: 'The Training Hub has 10 modules covering anatomy, Mako, THA/TKA/PKA, OR protocols, sales skills, territory management, credentialing, and competitive intelligence. Each module has quizzes to test retention. Recommended study schedule: 1 module per week minimum. Review quiz misses — those gaps will show up in real OR situations. Video resources are linked in each module.' },
+    { keys: ['call', 'cold call', 'office visit', 'drop in'], response: 'Office call tips: (1) Research the practice and surgeon before going in, (2) Bring value — clinical article, product info, or lunch, (3) Build a relationship with the front desk first, (4) Keep it short — 5-10 min is ideal, (5) Always leave with a next step, (6) Friday afternoon and mid-morning (9-11 AM) are often the best windows. Log every visit in CRM immediately.' },
+    { keys: ['crm', 'contact', 'track', 'log', 'notes'], response: 'Use the CRM for every surgeon, OR nurse, scrub tech, administrator, and scheduler you meet. Log: name, title, hospital, phone, email, relationship stage (cold/warm/hot/partner), last contact, next follow-up, and notes. Patterns you\'ll see over time: who responds to what, best contact times, relationship trajectory. CRM discipline separates top performers from average reps.' },
+    { keys: ['anatomy', 'hip', 'knee', 'joint', 'bone'], response: 'For joint anatomy, refer to Module 1 in the Training Hub. Key points: Hip = ball-and-socket (femoral head + acetabulum), Knee = hinge joint (femoral condyles + tibial plateau + patella). OA (osteoarthritis = cartilage breakdown) is the primary indication for replacement. Understanding anatomy helps you have meaningful clinical conversations with surgeons.' },
+    { keys: ['motivation', 'hard', 'tough', 'difficult', 'discouraged', 'tired'], response: 'Medical device sales is one of the most rewarding and challenging careers in healthcare. The first 6 months are the hardest — you\'re building from zero. Stay consistent: show up early, follow through on every commitment, keep learning, and track your progress. Your managers Cody and Chanel have been where you are. Use them. The reps who succeed are the ones who outwork, out-learn, and out-follow-up everyone else. You\'ve got this.' },
+    { keys: ['insurance', 'liability', 'coverage'], response: 'Vendor liability insurance certificates are required for hospital credentialing. Stryker provides coverage for employees — confirm with your HR/operations team that your certificate is current and uploaded to all your credentialing platforms. Typical requirement: $1M-$2M general liability. Keep a digital copy of your current certificate.' }
+  ],
+
+  // ─── DEFAULT CREDENTIALS ─────────────────────────────────────────────────
+  defaultCredentials: [
+    { id: 'c1', hospital: 'Baylor Scott & White Medical Center', platform: 'Reptrax', status: 'active', expDate: '2026-11-15', docs: ['Background Check', 'Flu Vaccine', 'TB Test', 'HIPAA Training', 'Liability Insurance'], notes: 'Check in via kiosk at main entrance' },
+    { id: 'c2', hospital: 'Texas Health Presbyterian', platform: 'Vendormate', status: 'expiring', expDate: '2026-04-30', docs: ['Drug Screen', 'Hep B Series', 'Product Training Cert', 'MMR Vaccine'], notes: 'Annual renewal required in April' },
+    { id: 'c3', hospital: 'Methodist Dallas Medical Center', platform: 'Intellicentrics', status: 'active', expDate: '2026-09-01', docs: ['Background Check', 'Flu Vaccine', 'HIPAA Training', 'Surgical Observation Training'], notes: 'Use Intellicentrics shared profile' },
+    { id: 'c4', hospital: 'Medical City Dallas', platform: 'Reptrax', status: 'pending', expDate: null, docs: ['Application Submitted', 'Background Check Pending'], notes: 'Awaiting approval — follow up with vendor credentialing office' },
+    { id: 'c5', hospital: 'UT Southwestern Medical Center', platform: 'Vendormate', status: 'active', expDate: '2026-12-31', docs: ['All Documents Current'], notes: 'Academic medical center — additional protocols may apply' }
+  ],
+
+  // ─── SIX MONTH MILESTONES ────────────────────────────────────────────────
+  milestones: [
+    { month: 1, title: 'Foundation', color: '#FFC72C', goals: ['Complete credentialing at all assigned facilities', 'Complete all 10 training modules + quizzes', 'Shadow 10+ OR cases with senior reps', 'Introduce yourself to all OR staff contacts', 'Set up CRM with initial contact database'] },
+    { month: 2, title: 'Case Support', color: '#FFD700', goals: ['Begin independent case coverage with oversight', 'Build relationships with scrub techs and circulators at top 3 accounts', 'Attend first Mako case and learn the workflow', 'Make 20+ surgeon office calls', 'Log 100% of interactions in CRM'] },
+    { month: 3, title: 'Independence', color: '#f97316', goals: ['Cover cases independently', 'Identify top 5 Mako growth opportunities', 'Schedule first surgeon lunch-and-learn', 'Initiate contact with at least 2 target (competitive) accounts', 'Present first territory plan to managers'] },
+    { month: 4, title: 'Growth', color: '#22c55e', goals: ['Drive measurable Mako utilization increase', 'Convert at least 1 new case from competitive account', 'Build relationships at 2+ new hospital accounts', 'Conduct surgeon education event (grand rounds, in-service)', 'Identify and document pipeline opportunities'] },
+    { month: 5, title: 'Optimization', color: '#3b82f6', goals: ['Achieve 90%+ case coverage rate', 'Submit Mako growth proposal to managers', 'Train new contact on at least one product', 'Review and refine territory tiering', 'Mentor newer team members if applicable'] },
+    { month: 6, title: 'Performance Review', color: '#8b5cf6', goals: ['Prepare comprehensive 6-month performance summary', 'Hit or exceed all activity KPIs', 'Present territory growth plan for next 6 months', 'Establish yourself as a trusted OR resource', 'Define 3 major goals for your second 6 months'] }
+  ],
+
+  // ─── PUBLIC STRYKER COMPANY METRICS ─────────────────────────────────────
+  // Source: Stryker Corporation public investor relations, press releases, and
+  // annual reports. All figures are publicly available. Verify at stryker.com/investors
+  strykerPublicData: {
+    lastUpdated: 'FY2024 / Q4 2024 Earnings Release (public)',
+    source: 'stryker.com/en-us/investors',
+    disclaimer: 'All figures sourced from publicly available Stryker investor relations materials. Verify latest figures at stryker.com/investors.',
+    companyOverview: [
+      { label: 'Full Year Net Sales (FY2024)',       value: '~$22.6B',   delta: '+10.1% reported', color: '#22c55e' },
+      { label: 'Organic Net Sales Growth (FY2024)',  value: '~9.0%',     delta: 'vs prior year',  color: '#22c55e' },
+      { label: 'MedSurg & Neurotechnology Sales',    value: '~$12.7B',   delta: 'Largest segment', color: '#3b82f6' },
+      { label: 'Orthopaedics & Spine Sales',         value: '~$9.9B',    delta: '+8% organic',    color: '#FFC72C' },
+      { label: 'Employees Worldwide',                value: '~52,000+',  delta: 'Global workforce',color: '#888'    },
+      { label: 'Countries Operated In',              value: '75+',       delta: 'Global presence', color: '#888'    },
+      { label: 'R&D Investment (FY2024)',             value: '~$1.3B',    delta: '~6% of revenue',  color: '#8b5cf6' },
+      { label: 'Stryker Stock Ticker',               value: 'SYK (NYSE)', delta: '',                  color: '#FFC72C' },
+    ],
+    makoStats: [
+      { label: 'Mako Global Installed Base',         value: '1,600+',    delta: 'Systems installed (public)',    color: '#FFC72C' },
+      { label: 'Mako Procedure Growth',              value: 'Record',    delta: 'YoY growth cited in earnings', color: '#22c55e' },
+      { label: 'Mako Cleared Indications',           value: '3',         delta: 'PKA · TKA · THA',              color: '#3b82f6' },
+      { label: 'Mako FDA Clearance (THA)',           value: '2017',      delta: 'First robotic THA platform',   color: '#888'    },
+      { label: 'Mako FDA Clearance (TKA)',           value: '2015',      delta: 'Robotic-arm TKA clearance',    color: '#888'    },
+      { label: 'Mako FDA Clearance (PKA)',           value: '2006',      delta: 'Original MAKO clearance',      color: '#888'    },
+    ],
+    marketContext: [
+      { label: 'US Joint Replacement Market Size',   value: '~$8B+',     delta: 'Projected 2026–2028',          color: '#FFC72C' },
+      { label: 'Robotic TJR Segment Growth (YoY)',   value: '~15%',      delta: 'Industry analyst estimate',    color: '#22c55e' },
+      { label: 'Annual US TKA Procedures',           value: '~700K+',    delta: 'AAOS public data',             color: '#3b82f6' },
+      { label: 'Annual US THA Procedures',           value: '~450K+',    delta: 'AAOS public data',             color: '#3b82f6' },
+      { label: 'DFW Metro Population Growth',        value: '+3.2%/yr',  delta: 'One of fastest in US (Census)',color: '#22c55e' },
+      { label: 'Projected Procedure Growth (TX)',    value: 'Above avg', delta: 'Driven by DFW population boom',color: '#22c55e' },
+    ]
+  },
+
+  // ─── PUBLISHED MAKO CLINICAL DATA ───────────────────────────────────────
+  // All data sourced from publicly available peer-reviewed publications.
+  // Use these stats in surgeon conversations. Always cite the source.
+  makoClinicData: {
+    disclaimer: 'Data sourced from publicly available peer-reviewed literature. Individual results vary. Always reference primary sources in clinical conversations.',
+    keyStats: [
+      {
+        stat: 'Improved Implant Positioning Accuracy',
+        value: 'Statistically Significant',
+        detail: 'Multiple published studies demonstrate Mako provides statistically significant improvement in acetabular cup and tibial component positioning accuracy vs. manual technique.',
+        source: 'Journal of Arthroplasty / JBJS (multiple peer-reviewed studies)',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=mako+robotic+arm+accuracy+joint+replacement',
+        color: '#22c55e'
+      },
+      {
+        stat: 'Reduced Outlier Rate in Component Placement',
+        value: 'Up to 3× reduction',
+        detail: 'Published data shows robotic-arm assisted TKA reduces positioning outliers (components outside target zone) by up to 3× compared to conventional instrumentation.',
+        source: 'Khlopas et al., Journal of Arthroplasty (publicly available)',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=mako+robotic+knee+outlier+positioning',
+        color: '#22c55e'
+      },
+      {
+        stat: 'Mako TKA — Kinematic Alignment Precision',
+        value: 'Higher reproducibility',
+        detail: 'Studies show Mako enables more reproducible achievement of planned alignment targets than manual technique across both mechanical and kinematic alignment goals.',
+        source: 'Marchand et al., JBJS / J Arthroplasty (public literature)',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=mako+robotic+total+knee+alignment',
+        color: '#3b82f6'
+      },
+      {
+        stat: 'Patient-Reported Outcome Improvements',
+        value: 'Favors robotic in early PROs',
+        detail: 'Several studies report improved early patient-reported outcomes (pain, function) and patient satisfaction for robotic-assisted vs. conventional TKA/THA at short-term follow-up.',
+        source: 'Kayani et al., JBJS 2018; Multiple comparative studies (publicly available)',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=mako+robotic+patient+outcomes+satisfaction',
+        color: '#FFC72C'
+      },
+      {
+        stat: 'Mako PKA — Implant Survivorship',
+        value: '>98% at 2 years (published)',
+        detail: 'Published registry and cohort data show high survivorship rates for Mako-assisted partial knee replacements, supported by precise component positioning.',
+        source: 'Coon et al., Knee (publicly available journal)',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=mako+partial+knee+survivorship',
+        color: '#22c55e'
+      },
+      {
+        stat: 'Operative Time — Learning Curve',
+        value: 'Normalizes by ~20 cases',
+        detail: 'Published learning curve analyses show operative time returns to conventional technique benchmarks within approximately 7–20 cases as surgeon and team proficiency builds.',
+        source: 'Sodhi et al., J Knee Surg; Marchand et al. (publicly available)',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=mako+robotic+learning+curve+operative+time',
+        color: '#f97316'
+      },
+      {
+        stat: 'Revision Rate Comparison',
+        value: 'Lower trend with robotic',
+        detail: 'Registry data and comparative studies suggest a trend toward lower revision rates with robotic-assisted TKA, likely attributable to improved positioning accuracy.',
+        source: 'AJRR Registry Data / Published comparative literature',
+        pubmedUrl: 'https://pubmed.ncbi.nlm.nih.gov/?term=robotic+knee+replacement+revision+rate',
+        color: '#22c55e'
+      },
+      {
+        stat: 'Surgeon Adoption Trend',
+        value: 'Rapidly increasing',
+        detail: 'AJRR data shows robotic-assisted joint replacement procedures growing as a percentage of total cases each year, reflecting increasing surgeon confidence and patient demand.',
+        source: 'AJRR Annual Report (American Joint Replacement Registry — publicly available)',
+        pubmedUrl: 'https://www.ajrr.net/publications-data/annual-reports',
+        color: '#3b82f6'
+      }
+    ],
+    talkTracks: [
+      { objection: '"Mako takes too long in the OR"', response: 'Published learning curve data shows OR time normalizes within approximately 7–20 cases. Most high-volume Mako surgeons report no meaningful difference in total OR time vs. manual after the curve.' },
+      { objection: '"I don\'t need a robot — I\'m already accurate"', response: 'Even experienced surgeons show variability in published studies. Mako doesn\'t replace skill — it enhances reproducibility. The data shows reduced outlier rates even for experienced surgeons.' },
+      { objection: '"My patients aren\'t asking for it"', response: 'Consumer awareness of robotic surgery is growing rapidly. Published surveys show patients actively searching for robotic options, and practices marketing Mako see measurable increases in new patient inquiries.' },
+      { objection: '"The data isn\'t mature enough"', response: 'Mako has been FDA-cleared since 2006 (PKA) and 2015 (TKA). There are now 10+ years of published peer-reviewed data, including registry data from the AJRR, supporting its accuracy and outcomes.' },
+    ]
+  }
+};
+</script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#111;color:#fff;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:#1a1a1a}
+    ::-webkit-scrollbar-thumb{background:#FFC72C;border-radius:3px}
+    .fade-in{animation:fadeIn .3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .glow{box-shadow:0 0 20px rgba(255,199,44,.15)}
+    .tab-btn{transition:all .2s;border-bottom:3px solid transparent;white-space:nowrap}
+    .tab-btn.active{border-bottom-color:#FFC72C;color:#FFC72C}
+    .tab-btn:hover{color:#FFC72C}
+    .card{background:#1e1e1e;border:1px solid #2d2d2d;border-radius:12px;padding:20px}
+    .card:hover{border-color:#3d3d3d}
+    .inp{background:#2a2a2a;border:1px solid #3d3d3d;color:#fff;border-radius:8px;padding:10px 14px;width:100%;outline:none;transition:border .2s}
+    .inp:focus{border-color:#FFC72C}
+    .inp::placeholder{color:#666}
+    .btn-y{background:#FFC72C;color:#111;font-weight:700;border-radius:8px;padding:9px 18px;border:none;cursor:pointer;transition:all .2s}
+    .btn-y:hover{background:#FFD700;transform:translateY(-1px)}
+    .btn-o{background:transparent;color:#FFC72C;border:1px solid #FFC72C;font-weight:600;border-radius:8px;padding:9px 18px;cursor:pointer;transition:all .2s}
+    .btn-o:hover{background:rgba(255,199,44,.1)}
+    .btn-r{background:#ef4444;color:#fff;font-weight:600;border-radius:8px;padding:9px 18px;border:none;cursor:pointer}
+    .prog{background:#333;border-radius:20px;height:8px;overflow:hidden}
+    .prog-fill{background:linear-gradient(90deg,#FFC72C,#FFD700);height:100%;border-radius:20px;transition:width .5s ease}
+    select.inp option{background:#2a2a2a}
+    textarea.inp{resize:vertical;min-height:80px}
+    .badge{display:inline-block;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700}
+    .badge-y{background:#FFC72C;color:#111}
+    .badge-g{background:#22c55e;color:#fff}
+    .badge-r{background:#ef4444;color:#fff}
+    .badge-o{background:#f97316;color:#fff}
+    .badge-b{background:#3b82f6;color:#fff}
+    .badge-gr{background:#555;color:#ccc}
+    .stat-card{background:#1e1e1e;border:1px solid #2d2d2d;border-radius:12px;padding:16px;text-align:center}
+    .chat-bubble-user{background:#FFC72C;color:#111;border-radius:18px 18px 4px 18px;padding:10px 16px;max-width:75%;align-self:flex-end;font-weight:500}
+    .chat-bubble-bot{background:#2a2a2a;color:#fff;border-radius:18px 18px 18px 4px;padding:10px 16px;max-width:75%;align-self:flex-start;border:1px solid #3d3d3d}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center}
+    .modal{background:#1e1e1e;border:1px solid #3d3d3d;border-radius:16px;padding:28px;max-width:640px;width:90%;max-height:85vh;overflow-y:auto}
+    .quiz-opt{border:1px solid #3d3d3d;border-radius:8px;padding:10px 14px;cursor:pointer;transition:all .2s;text-align:left;background:#2a2a2a;color:#fff;width:100%}
+    .quiz-opt:hover{border-color:#FFC72C;background:rgba(255,199,44,.08)}
+    .quiz-opt.correct{background:rgba(34,197,94,.2);border-color:#22c55e;color:#4ade80}
+    .quiz-opt.wrong{background:rgba(239,68,68,.2);border-color:#ef4444;color:#f87171}
+    th{background:#2a2a2a;padding:10px 14px;text-align:left;font-weight:600;color:#FFC72C;font-size:13px}
+    td{padding:10px 14px;border-bottom:1px solid #2a2a2a;font-size:13px;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#232323}
+    table{width:100%;border-collapse:collapse;background:#1e1e1e;border-radius:10px;overflow:hidden}
+    .section-title{font-size:22px;font-weight:800;color:#FFC72C;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .maintenance-banner{background:#1a1a00;border:1px solid #FFC72C;color:#FFC72C;text-align:center;padding:6px;font-size:12px;font-weight:600}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const DATA = window.CJ_DATA;
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+const uid = () => Math.random().toString(36).slice(2,10);
+const today = () => new Date();
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const fmtDateShort = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+const daysUntil = d => Math.ceil((new Date(d) - new Date()) / 86400000);
+const ls = (k,v) => { try { if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); } catch(e){} };
+
+function useLS(key, def) {
+  const [val, setVal] = useState(() => ls(key) ?? def);
+  const set = useCallback(v => { setVal(v); ls(key, v); }, [key]);
+  return [val, set];
+}
+
+// ── Small UI Components ────────────────────────────────────────────────────
+const StatCard = ({label,value,sub,icon,color}) => (
+  <div className="stat-card">
+    <div style={{fontSize:24,marginBottom:4}}>{icon}</div>
+    <div style={{fontSize:28,fontWeight:800,color:color||'#FFC72C'}}>{value}</div>
+    <div style={{fontSize:13,color:'#aaa',marginTop:2}}>{label}</div>
+    {sub && <div style={{fontSize:11,color:'#666',marginTop:4}}>{sub}</div>}
+  </div>
+);
+
+const Modal = ({title,onClose,children}) => (
+  <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&onClose()}>
+    <div className="modal fade-in">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+        <h2 style={{fontWeight:800,fontSize:20,color:'#FFC72C'}}>{title}</h2>
+        <button onClick={onClose} style={{background:'none',border:'none',color:'#aaa',fontSize:22,cursor:'pointer'}}>✕</button>
+      </div>
+      {children}
+    </div>
+  </div>
+);
+
+const Badge = ({type,text}) => <span className={`badge badge-${type}`}>{text}</span>;
+
+const ProgressBar = ({pct}) => (
+  <div className="prog"><div className="prog-fill" style={{width:`${Math.min(pct,100)}%`}}/></div>
+);
+
+// ── HEADER ─────────────────────────────────────────────────────────────────
+function Header({user}) {
+  const [time, setTime] = useState(new Date());
+  useEffect(()=>{ const t=setInterval(()=>setTime(new Date()),1000); return()=>clearInterval(t); },[]);
+  const h=time.getHours(), m=time.getMinutes();
+  const isMaint = h===1 && m<30;
+  return (
+    <div>
+      {isMaint && <div className="maintenance-banner">⚙️  MAINTENANCE WINDOW ACTIVE (1:00–1:30 AM CT) — System optimizing for tomorrow. Back shortly.</div>}
+      <header style={{background:'linear-gradient(135deg,#111 0%,#1a1a00 100%)',borderBottom:'2px solid #FFC72C',padding:'12px 24px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <div style={{background:'#FFC72C',color:'#111',fontWeight:900,fontSize:14,padding:'6px 12px',borderRadius:8,letterSpacing:1}}>CJ 3.0 BETA</div>
+          <div>
+            <div style={{fontWeight:700,fontSize:16}}>Stryker ASR Agent</div>
+            <div style={{fontSize:11,color:'#888'}}>Joint Replacement · North Texas Territory</div>
+          </div>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <div style={{fontWeight:700,color:'#FFC72C',fontSize:15}}>{time.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+          <div style={{fontSize:11,color:'#888'}}>{time.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
+          <div style={{fontSize:11,color:'#555'}}>Rep: {user.name} · Day {Math.ceil((new Date()-new Date(user.startDate))/86400000)} in role</div>
+        </div>
+      </header>
+    </div>
+  );
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+const TABS = [
+  {id:'dashboard',label:'📊 Dashboard'},
+  {id:'training',label:'🎓 Training'},
+  {id:'intel',label:'📰 Intel Report'},
+  {id:'roadmap',label:'🗓 6-Month Plan'},
+  {id:'metrics',label:'📈 Metrics'},
+  {id:'creds',label:'📋 Credentialing'},
+  {id:'crm',label:'👥 CRM'},
+  {id:'team',label:'🤝 Team Hub'},
+  {id:'report',label:'📤 Manager Report'},
+  {id:'chat',label:'💬 Assistant'},
+];
+
+function Nav({active,setActive}) {
+  return (
+    <div style={{background:'#161616',borderBottom:'1px solid #2d2d2d',overflowX:'auto',display:'flex',padding:'0 16px'}}>
+      {TABS.map(t=>(
+        <button key={t.id} className={`tab-btn ${active===t.id?'active':''}`}
+          style={{padding:'14px 16px',background:'none',border:'none',color:active===t.id?'#FFC72C':'#888',fontWeight:600,fontSize:13,cursor:'pointer'}}
+          onClick={()=>setActive(t.id)}>{t.label}</button>
+      ))}
+    </div>
+  );
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+function Dashboard({contacts,credentials,trainingProgress,user}) {
+  const d = today();
+  const rep = DATA.reportTemplates[d.getDay()];
+  const totalMods = DATA.trainingModules.length;
+  const completed = Object.values(trainingProgress).filter(v=>v?.completed).length;
+  const expiring = credentials.filter(c=>c.status==='expiring'||c.status==='expired').length;
+  const dayNum = Math.ceil((new Date()-new Date(user.startDate))/86400000);
+  const monthNum = Math.min(6,Math.ceil(dayNum/30));
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1200,margin:'0 auto'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:16,marginBottom:24}}>
+        <StatCard label="Day in Role" value={dayNum} icon="📅" sub={`Month ${monthNum} of 6`}/>
+        <StatCard label="Training Complete" value={`${completed}/${totalMods}`} icon="🎓" sub={`${Math.round(completed/totalMods*100)}% done`}/>
+        <StatCard label="CRM Contacts" value={contacts.length} icon="👥" sub="Total logged"/>
+        <StatCard label="Credential Alerts" value={expiring} icon="⚠️" color={expiring>0?'#f97316':'#22c55e'} sub={expiring>0?'Needs attention':'All clear'}/>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:20}}>
+        <div>
+          <div className="card glow" style={{marginBottom:20}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
+              <div>
+                <div style={{color:'#FFC72C',fontWeight:800,fontSize:16}}>☀️ Today's Morning Brief</div>
+                <div style={{color:'#666',fontSize:12}}>Auto-generated · {d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})} · Released 6:00 AM CT</div>
+              </div>
+              <span className="badge badge-y">{rep.focus}</span>
+            </div>
+            <div style={{borderLeft:'3px solid #FFC72C',paddingLeft:16,marginBottom:14}}>
+              <div style={{color:'#aaa',fontSize:13,fontWeight:600,marginBottom:4}}>🤖 MAKO INSIGHT</div>
+              <p style={{fontSize:14,lineHeight:1.6,color:'#ddd'}}>{rep.makoHighlight}</p>
+            </div>
+            <div style={{borderLeft:'3px solid #444',paddingLeft:16,marginBottom:14}}>
+              <div style={{color:'#aaa',fontSize:13,fontWeight:600,marginBottom:4}}>📈 MARKET INSIGHT</div>
+              <p style={{fontSize:14,lineHeight:1.6,color:'#ddd'}}>{rep.marketInsight}</p>
+            </div>
+            <div style={{borderLeft:'3px solid #3b82f6',paddingLeft:16}}>
+              <div style={{color:'#aaa',fontSize:13,fontWeight:600,marginBottom:4}}>📍 TERRITORY FOCUS</div>
+              <p style={{fontSize:14,lineHeight:1.6,color:'#ddd'}}>{rep.territory}</p>
+            </div>
+          </div>
+
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:800,fontSize:15,marginBottom:12}}>⚡ Today's Action Items</div>
+            {rep.action.map((a,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:i<rep.action.length-1?'1px solid #2d2d2d':''}}>
+                <div style={{width:22,height:22,borderRadius:'50%',border:'2px solid #FFC72C',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,color:'#FFC72C',flexShrink:0}}>{i+1}</div>
+                <span style={{fontSize:14,color:'#ddd'}}>{a}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:12}}>📚 Training Progress</div>
+            <ProgressBar pct={completed/totalMods*100}/>
+            <div style={{fontSize:13,color:'#aaa',marginTop:8}}>{completed} of {totalMods} modules complete</div>
+            {DATA.trainingModules.filter(m=>!trainingProgress[m.id]?.completed).slice(0,3).map(m=>(
+              <div key={m.id} style={{marginTop:8,padding:'8px',background:'#2a2a2a',borderRadius:8,fontSize:13}}>
+                <span style={{fontSize:16,marginRight:6}}>{m.icon}</span>{m.title}
+              </div>
+            ))}
+          </div>
+
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:10}}>🏥 Credential Alerts</div>
+            {credentials.filter(c=>c.status!=='active').length===0
+              ? <div style={{color:'#22c55e',fontSize:13}}>✅ All credentials current!</div>
+              : credentials.filter(c=>c.status!=='active').map(c=>(
+                <div key={c.id} style={{marginBottom:8,padding:'8px',background:'#2a2a2a',borderRadius:8}}>
+                  <div style={{fontSize:13,fontWeight:600}}>{c.hospital}</div>
+                  <div style={{fontSize:11,color:'#888',marginTop:2}}>{c.platform} · <span style={{color:c.status==='expired'?'#ef4444':'#f97316'}}>{c.status.toUpperCase()}</span></div>
+                  {c.expDate && <div style={{fontSize:11,color:'#666'}}>{daysUntil(c.expDate)} days</div>}
+                </div>
+              ))
+            }
+          </div>
+
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:10}}>⚙️ System Status</div>
+            <div style={{fontSize:13,color:'#aaa',marginBottom:6}}>Next maintenance: <span style={{color:'#FFC72C'}}>1:00–1:30 AM CT</span></div>
+            <div style={{fontSize:12,color:'#666'}}>Daily reports release at 6:00 AM CT. Team reports every Sunday.</div>
+            <div style={{marginTop:10,padding:'8px',background:'#0a1a0a',borderRadius:8,border:'1px solid #1a3a1a'}}>
+              <div style={{color:'#22c55e',fontSize:12,fontWeight:700}}>● All Systems Operational</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── TRAINING ───────────────────────────────────────────────────────────────
+function Training({trainingProgress,setTrainingProgress}) {
+  const [selected,setSelected]=useState(null);
+  const [quiz,setQuiz]=useState(null);
+  const [qIdx,setQIdx]=useState(0);
+  const [ans,setAns]=useState(null);
+  const [score,setScore]=useState(0);
+  const [quizDone,setQuizDone]=useState(false);
+  const [view,setView]=useState('modules'); // 'modules','module','quiz'
+
+  const prog = mod => trainingProgress[mod.id] || {};
+  const pct = () => DATA.trainingModules.filter(m=>trainingProgress[m.id]?.completed).length / DATA.trainingModules.length * 100;
+
+  const startQuiz = mod => {
+    setQuiz(mod);
+    setQIdx(0);
+    setAns(null);
+    setScore(0);
+    setQuizDone(false);
+    setView('quiz');
+  };
+
+  const handleAns = (mod, idx) => {
+    if(ans!==null) return;
+    setAns(idx);
+    if(idx === quiz.quiz[qIdx].correct) setScore(s=>s+1);
+    setTimeout(()=>{
+      if(qIdx+1 >= quiz.quiz.length) {
+        setQuizDone(true);
+        const pctScore = (score+(idx===quiz.quiz[qIdx].correct?1:0)) / quiz.quiz.length * 100;
+        if(pctScore>=70) {
+          setTrainingProgress(prev=>({...prev,[quiz.id]:{...prev[quiz.id],completed:true,score:pctScore,date:new Date().toISOString()}}));
+        }
+      } else {
+        setQIdx(q=>q+1);
+        setAns(null);
+      }
+    }, 1400);
+  };
+
+  const finalScore = () => score / quiz.quiz.length * 100;
+
+  if(view==='quiz' && quiz) {
+    const q = quiz.quiz[qIdx];
+    return (
+      <div className="fade-in" style={{padding:24,maxWidth:700,margin:'0 auto'}}>
+        <button className="btn-o" onClick={()=>setView('module')} style={{marginBottom:20}}>← Back to Module</button>
+        {!quizDone ? (
+          <div className="card">
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+              <div style={{color:'#FFC72C',fontWeight:700}}>{quiz.icon} {quiz.title} — Quiz</div>
+              <div style={{fontSize:13,color:'#888'}}>Q{qIdx+1}/{quiz.quiz.length}</div>
+            </div>
+            <ProgressBar pct={(qIdx/quiz.quiz.length)*100}/>
+            <div style={{fontSize:16,fontWeight:600,margin:'20px 0 16px',lineHeight:1.5}}>{q.q}</div>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {q.opts.map((o,i)=>(
+                <button key={i} className={`quiz-opt ${ans!==null?(i===q.correct?'correct':ans===i?'wrong':''):''}`}
+                  onClick={()=>handleAns(quiz,i)}>{o}</button>
+              ))}
+            </div>
+            {ans!==null && <div style={{marginTop:16,padding:14,background:'#1a2a1a',border:'1px solid #2a4a2a',borderRadius:8,fontSize:13,color:'#aaa',lineHeight:1.5}}>
+              💡 {q.exp}
+            </div>}
+          </div>
+        ) : (
+          <div className="card" style={{textAlign:'center'}}>
+            <div style={{fontSize:48,marginBottom:12}}>{finalScore()>=70?'🏆':'📚'}</div>
+            <div style={{fontSize:24,fontWeight:800,color:finalScore()>=70?'#22c55e':'#f97316',marginBottom:8}}>
+              {Math.round(finalScore())}%
+            </div>
+            <div style={{fontSize:16,color:'#ddd',marginBottom:20}}>
+              {finalScore()>=70?'Module Passed! Well done.':'Keep studying — try again.'}
+            </div>
+            <div style={{color:'#888',fontSize:13,marginBottom:20}}>{score} of {quiz.quiz.length} correct</div>
+            <div style={{display:'flex',gap:12,justifyContent:'center'}}>
+              <button className="btn-y" onClick={()=>{setView('module');setSelected(quiz)}}>Back to Module</button>
+              {finalScore()<70 && <button className="btn-o" onClick={()=>startQuiz(quiz)}>Retry Quiz</button>}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if(view==='module' && selected) {
+    const p = prog(selected);
+    return (
+      <div className="fade-in" style={{padding:24,maxWidth:800,margin:'0 auto'}}>
+        <button className="btn-o" onClick={()=>setView('modules')} style={{marginBottom:20}}>← All Modules</button>
+        <div className="card" style={{marginBottom:20}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+            <div>
+              <div style={{fontSize:28,marginBottom:6}}>{selected.icon}</div>
+              <div style={{fontSize:22,fontWeight:800,marginBottom:4}}>{selected.title}</div>
+              <div style={{color:'#888',fontSize:13}}>{selected.category} · {selected.duration}</div>
+            </div>
+            {p.completed && <Badge type="g" text="✓ Completed"/>}
+          </div>
+          <p style={{marginTop:16,lineHeight:1.7,color:'#ccc',fontSize:14}}>{selected.content}</p>
+          <div style={{marginTop:20,display:'flex',gap:12,flexWrap:'wrap'}}>
+            <button className="btn-y" onClick={()=>startQuiz(selected)}>
+              {p.completed?'Retake Quiz':'Take Quiz'}
+            </button>
+            {p.completed && <div style={{color:'#22c55e',fontSize:13,display:'flex',alignItems:'center',gap:6}}>
+              ✅ Last score: {Math.round(p.score)}% · {fmtDateShort(p.date)}
+            </div>}
+          </div>
+        </div>
+        <div className="card">
+          <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:14}}>🎬 Video Resources</div>
+          {selected.videos.map((v,i)=>(
+            <a key={i} href={v.url} target="_blank" rel="noopener noreferrer"
+              style={{display:'flex',alignItems:'center',gap:10,padding:'10px',background:'#2a2a2a',borderRadius:8,marginBottom:8,textDecoration:'none',color:'#ddd',fontSize:14}}>
+              <span style={{fontSize:20}}>▶️</span><span>{v.title}</span>
+              <span style={{marginLeft:'auto',fontSize:11,color:'#666'}}>External Link →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Module list
+  const cats = [...new Set(DATA.trainingModules.map(m=>m.category))];
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1100,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+        <div className="section-title">🎓 Training Hub</div>
+        <div style={{textAlign:'right'}}>
+          <div style={{color:'#FFC72C',fontWeight:700,fontSize:18}}>{Math.round(pct())}%</div>
+          <div style={{fontSize:12,color:'#888'}}>Overall completion</div>
+        </div>
+      </div>
+      <div style={{marginBottom:20}}>
+        <ProgressBar pct={pct()}/>
+      </div>
+      {cats.map(cat=>(
+        <div key={cat} style={{marginBottom:28}}>
+          <div style={{color:'#888',fontSize:13,fontWeight:700,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>{cat}</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}}>
+            {DATA.trainingModules.filter(m=>m.category===cat).map(m=>{
+              const p=prog(m);
+              return (
+                <div key={m.id} className="card" style={{cursor:'pointer',position:'relative'}}
+                  onClick={()=>{setSelected(m);setView('module')}}>
+                  {p.completed && <div style={{position:'absolute',top:12,right:12}}><Badge type="g" text="✓"/></div>}
+                  <div style={{fontSize:28,marginBottom:8}}>{m.icon}</div>
+                  <div style={{fontWeight:700,fontSize:15,marginBottom:4}}>{m.title}</div>
+                  <div style={{color:'#888',fontSize:12,marginBottom:12}}>{m.duration} · {m.quiz.length} questions</div>
+                  <p style={{fontSize:13,color:'#aaa',lineHeight:1.5}}>{m.description}</p>
+                  {p.completed && <div style={{marginTop:12,fontSize:12,color:'#22c55e'}}>Score: {Math.round(p.score)}%</div>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      <div style={{marginTop:24,padding:16,background:'#1a1a00',border:'1px solid #3d3d00',borderRadius:10,fontSize:13,color:'#aaa'}}>
+        ⚖️ <strong style={{color:'#FFC72C'}}>Confidentiality Notice:</strong> All training content is derived from publicly available information.
+        Always defer to your Stryker onboarding materials, manager guidance, and official Stryker training for product specifications and compliance requirements.
+      </div>
+    </div>
+  );
+}
+
+// ── INDUSTRY INTEL ─────────────────────────────────────────────────────────
+function IntelReport() {
+  const d = today();
+  const rep = DATA.reportTemplates[d.getDay()];
+  const [archiveDay,setArchiveDay]=useState(null);
+
+  const archiveDays = [0,1,2,3,4,5,6].map(i=>{
+    const dt = new Date(); dt.setDate(dt.getDate()-i);
+    return {dt, rep: DATA.reportTemplates[dt.getDay()]};
+  });
+
+  const shown = archiveDay !== null ? archiveDays[archiveDay] : {dt:d,rep};
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1100,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12,marginBottom:20}}>
+        <div>
+          <div className="section-title">📰 Industry Intel Report</div>
+          <div style={{color:'#666',fontSize:13}}>Released daily at 6:00 AM CT · North Texas / Mako Focus</div>
+        </div>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          {archiveDays.map((a,i)=>(
+            <button key={i} onClick={()=>setArchiveDay(i===archiveDay?null:i)}
+              className={i===(archiveDay??0)?'btn-y':'btn-o'}
+              style={{fontSize:11,padding:'6px 10px'}}>
+              {i===0?'Today':i===1?'Yesterday':a.dt.toLocaleDateString('en-US',{weekday:'short'})}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:20}}>
+        <div>
+          <div className="card" style={{marginBottom:16}}>
+            <div style={{display:'flex',justify:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:8}}>
+              <div>
+                <div style={{color:'#FFC72C',fontWeight:800,fontSize:18}}>{shown.dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
+                <div style={{color:'#888',fontSize:13}}>Focus: {shown.rep.focus}</div>
+              </div>
+              <Badge type="y" text="INTEL"/>
+            </div>
+
+            <div style={{marginBottom:18}}>
+              <div style={{background:'rgba(255,199,44,.08)',border:'1px solid rgba(255,199,44,.2)',borderRadius:10,padding:16}}>
+                <div style={{color:'#FFC72C',fontWeight:700,fontSize:13,marginBottom:8}}>🤖 MAKO ROBOTICS SPOTLIGHT</div>
+                <p style={{fontSize:14,lineHeight:1.7,color:'#ddd'}}>{shown.rep.makoHighlight}</p>
+              </div>
+            </div>
+            <div style={{marginBottom:18}}>
+              <div style={{background:'#1e2a1e',border:'1px solid #2a4a2a',borderRadius:10,padding:16}}>
+                <div style={{color:'#22c55e',fontWeight:700,fontSize:13,marginBottom:8}}>📈 MARKET INTELLIGENCE</div>
+                <p style={{fontSize:14,lineHeight:1.7,color:'#ddd'}}>{shown.rep.marketInsight}</p>
+              </div>
+            </div>
+            <div style={{marginBottom:18}}>
+              <div style={{background:'#1a1e2a',border:'1px solid #2a3a4a',borderRadius:10,padding:16}}>
+                <div style={{color:'#3b82f6',fontWeight:700,fontSize:13,marginBottom:8}}>📍 NORTH TEXAS TERRITORY</div>
+                <p style={{fontSize:14,lineHeight:1.7,color:'#ddd'}}>{shown.rep.territory}</p>
+              </div>
+            </div>
+
+            <div style={{background:'#1a1a00',border:'1px solid #3d3d00',borderRadius:10,padding:16}}>
+              <div style={{color:'#FFC72C',fontWeight:700,fontSize:13,marginBottom:10}}>⚡ TODAY'S ACTION ITEMS</div>
+              {shown.rep.action.map((a,i)=>(
+                <div key={i} style={{display:'flex',gap:10,padding:'7px 0',borderBottom:i<shown.rep.action.length-1?'1px solid #2d2d00':'',fontSize:14,color:'#ddd'}}>
+                  <span style={{color:'#FFC72C',fontWeight:700,minWidth:20}}>{i+1}.</span>{a}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:14,marginBottom:12}}>🏥 North Texas Key Systems</div>
+            {['HCA Healthcare (DFW)','Baylor Scott & White','Methodist Health System','UT Southwestern Medical','Texas Health Resources','Medical City Healthcare','Cook Children\'s (Fort Worth)'].map(s=>(
+              <div key={s} style={{padding:'6px 0',borderBottom:'1px solid #2a2a2a',fontSize:13,color:'#ccc'}}>🏥 {s}</div>
+            ))}
+          </div>
+
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:14,marginBottom:12}}>📊 Market Pulse</div>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {[
+                {label:'Robotic TJR Growth (YoY)',val:'+15%',color:'#22c55e'},
+                {label:'DFW Population Growth',val:'+3.2%',color:'#22c55e'},
+                {label:'Avg Age: Joint Replacement',val:'65–72',color:'#FFC72C'},
+                {label:'Mako Installed (TX)',val:'Growing',color:'#3b82f6'},
+                {label:'Revision Rate (Robotic)',val:'↓ vs Manual',color:'#22c55e'},
+              ].map(m=>(
+                <div key={m.label} style={{display:'flex',justifyContent:'space-between',fontSize:13}}>
+                  <span style={{color:'#aaa'}}>{m.label}</span>
+                  <span style={{fontWeight:700,color:m.color}}>{m.val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:14,marginBottom:10}}>🔗 Quick Links</div>
+            {[
+              {label:'Stryker Official Website',url:'https://www.stryker.com'},
+              {label:'Stryker Mako Page',url:'https://www.stryker.com/us/en/joint-replacement/systems/mako-robotic-arm-assisted-surgery.html'},
+              {label:'Stryker YouTube Channel',url:'https://www.youtube.com/@Stryker'},
+              {label:'PubMed — Robotic TJR Studies',url:'https://pubmed.ncbi.nlm.nih.gov/?term=mako+robotic+joint+replacement'},
+              {label:'AAOS — Joint Replacement Stats',url:'https://www.aaos.org/research/research-and-quality/aaos-research-news/'},
+            ].map(l=>(
+              <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer"
+                style={{display:'block',padding:'7px 0',borderBottom:'1px solid #2a2a2a',fontSize:12,color:'#3b82f6',textDecoration:'none'}}>
+                🔗 {l.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 6-MONTH ROADMAP ────────────────────────────────────────────────────────
+function Roadmap({user,trainingProgress}) {
+  const [milestoneNotes,setMilestoneNotes]=useLS('cj_milestoneNotes',{});
+  const [selectedMonth,setSelectedMonth]=useState(null);
+  const [note,setNote]=useState('');
+  const dayNum = Math.ceil((new Date()-new Date(user.startDate))/86400000);
+  const currentMonth = Math.min(6,Math.ceil(dayNum/30));
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1000,margin:'0 auto'}}>
+      <div className="section-title">🗓 6-Month Success Roadmap</div>
+      <div style={{marginBottom:20,color:'#888',fontSize:14}}>
+        Day <strong style={{color:'#FFC72C'}}>{dayNum}</strong> in role · Currently in <strong style={{color:'#FFC72C'}}>Month {currentMonth}</strong>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:24}}>
+        {DATA.milestones.map(m=>{
+          const done = m.month < currentMonth;
+          const active = m.month === currentMonth;
+          return (
+            <div key={m.month} className="card" style={{borderColor:active?m.color:'#2d2d2d',cursor:'pointer',opacity:done?0.7:1}}
+              onClick={()=>{setSelectedMonth(m.month);setNote(milestoneNotes[m.month]||'')}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                <div style={{color:m.color,fontWeight:800,fontSize:16}}>Month {m.month}</div>
+                {done && <Badge type="g" text="✓ Done"/>}
+                {active && <Badge type="y" text="ACTIVE"/>}
+              </div>
+              <div style={{fontWeight:700,fontSize:15,marginBottom:10,color:m.color}}>{m.title}</div>
+              {m.goals.map((g,i)=>(
+                <div key={i} style={{fontSize:12,color:'#aaa',padding:'4px 0',borderBottom:'1px solid #2a2a2a',display:'flex',gap:6}}>
+                  <span style={{color:done?'#22c55e':active?m.color:'#555'}}>{done?'✓':active?'→':'○'}</span>{g}
+                </div>
+              ))}
+              {milestoneNotes[m.month] && <div style={{marginTop:10,padding:8,background:'#2a2a2a',borderRadius:6,fontSize:12,color:'#aaa'}}>{milestoneNotes[m.month]}</div>}
+            </div>
+          );
+        })}
+      </div>
+
+      {selectedMonth && (
+        <Modal title={`Month ${selectedMonth} Notes`} onClose={()=>setSelectedMonth(null)}>
+          <textarea className="inp" rows={5} value={note} onChange={e=>setNote(e.target.value)}
+            placeholder="Add personal notes, achievements, or reflections for this month..."/>
+          <div style={{marginTop:12,display:'flex',gap:10}}>
+            <button className="btn-y" onClick={()=>{setMilestoneNotes(prev=>({...prev,[selectedMonth]:note}));setSelectedMonth(null);}}>Save Notes</button>
+            <button className="btn-o" onClick={()=>setSelectedMonth(null)}>Cancel</button>
+          </div>
+        </Modal>
+      )}
+
+      <div className="card" style={{background:'#1a1a00',borderColor:'#3d3d00'}}>
+        <div style={{color:'#FFC72C',fontWeight:700,fontSize:14,marginBottom:10}}>💡 First 6 Months Success Tips</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+          {[
+            'Treat every OR case as an opportunity to learn, not just cover',
+            'Build relationships with OR staff before you need them to like you',
+            'Log EVERY interaction in CRM — your memory is not as good as a database',
+            'Ask your full sales reps for coaching constantly — they know the territory',
+            'Never miss a credentialing deadline — it will cost you cases',
+            'Send your weekly report EVERY Sunday — consistency builds trust',
+            'Study your competition — know what your surgeons are currently using',
+            'Be 30 min early to every case — preparation is professionalism',
+          ].map((t,i)=>(
+            <div key={i} style={{fontSize:13,color:'#ccc',padding:10,background:'#111',borderRadius:8,border:'1px solid #2d2d00'}}>
+              <span style={{color:'#FFC72C',fontWeight:700}}>#{i+1}</span> {t}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── CREDENTIALING ──────────────────────────────────────────────────────────
+function Credentialing({credentials,setCredentials}) {
+  const [showForm,setShowForm]=useState(false);
+  const [editId,setEditId]=useState(null);
+  const [form,setForm]=useState({hospital:'',platform:'Reptrax',status:'active',expDate:'',docs:'',notes:''});
+  const f = k => e => setForm(prev=>({...prev,[k]:e.target.value}));
+
+  const save = () => {
+    if(!form.hospital) return;
+    const entry={id:editId||uid(),...form,docs:form.docs.split('\n').filter(Boolean)};
+    if(editId) setCredentials(prev=>prev.map(c=>c.id===editId?entry:c));
+    else setCredentials(prev=>[...prev,entry]);
+    setShowForm(false);setEditId(null);setForm({hospital:'',platform:'Reptrax',status:'active',expDate:'',docs:'',notes:''});
+  };
+
+  const openEdit = c => {
+    setForm({...c,docs:Array.isArray(c.docs)?c.docs.join('\n'):c.docs||''});
+    setEditId(c.id);setShowForm(true);
+  };
+
+  const del = id => setCredentials(prev=>prev.filter(c=>c.id!==id));
+
+  const statusColor = s => ({active:'#22c55e',expiring:'#f97316',expired:'#ef4444',pending:'#3b82f6'}[s]||'#888');
+
+  const expiring = credentials.filter(c=>{
+    if(!c.expDate) return false;
+    return daysUntil(c.expDate) <= 60;
+  });
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1100,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+        <div className="section-title">📋 Hospital Credentialing</div>
+        <button className="btn-y" onClick={()=>setShowForm(true)}>+ Add Facility</button>
+      </div>
+
+      {expiring.length>0 && (
+        <div style={{background:'#2a1000',border:'1px solid #f97316',borderRadius:10,padding:14,marginBottom:20}}>
+          <div style={{color:'#f97316',fontWeight:700,marginBottom:8}}>⚠️ Attention Required ({expiring.length} facilities)</div>
+          {expiring.map(c=>(
+            <div key={c.id} style={{fontSize:13,color:'#ccc',marginBottom:4}}>
+              • <strong>{c.hospital}</strong> — {c.platform} — Expires {fmtDate(c.expDate)} ({daysUntil(c.expDate)} days)
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))',gap:16}}>
+        {credentials.map(c=>(
+          <div key={c.id} className="card" style={{borderLeft:`4px solid ${statusColor(c.status)}`}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
+              <div>
+                <div style={{fontWeight:700,fontSize:14}}>{c.hospital}</div>
+                <div style={{fontSize:12,color:'#888',marginTop:2}}>{c.platform}</div>
+              </div>
+              <span className="badge" style={{background:statusColor(c.status),color:'#fff'}}>{c.status.toUpperCase()}</span>
+            </div>
+            {c.expDate && (
+              <div style={{fontSize:13,color:daysUntil(c.expDate)<=30?'#ef4444':daysUntil(c.expDate)<=60?'#f97316':'#888',marginBottom:8}}>
+                📅 Expires: {fmtDate(c.expDate)} ({daysUntil(c.expDate)} days)
+              </div>
+            )}
+            <div style={{marginBottom:10}}>
+              {(Array.isArray(c.docs)?c.docs:c.docs?.split('\n')||[]).map((d,i)=>(
+                <span key={i} style={{display:'inline-block',background:'#2a2a2a',color:'#ccc',fontSize:11,padding:'2px 8px',borderRadius:12,margin:'2px'}}>{d}</span>
+              ))}
+            </div>
+            {c.notes && <div style={{fontSize:12,color:'#888',marginBottom:10}}>{c.notes}</div>}
+            <div style={{display:'flex',gap:8}}>
+              <button className="btn-o" style={{fontSize:12,padding:'6px 12px'}} onClick={()=>openEdit(c)}>Edit</button>
+              <button className="btn-r" style={{fontSize:12,padding:'6px 12px'}} onClick={()=>del(c.id)}>Remove</button>
+            </div>
+          </div>
+        ))}
+        {credentials.length===0 && <div style={{color:'#555',fontSize:14}}>No credentials logged yet. Add your first facility.</div>}
+      </div>
+
+      {showForm && (
+        <Modal title={editId?'Edit Credential':'Add Facility Credential'} onClose={()=>{setShowForm(false);setEditId(null);}}>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Hospital / Facility</label>
+              <input className="inp" value={form.hospital} onChange={f('hospital')} placeholder="e.g. Baylor Scott & White Medical Center"/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Credentialing Platform</label>
+              <select className="inp" value={form.platform} onChange={f('platform')}>
+                {['Reptrax','Vendormate','Intellicentrics','Symplr','Other'].map(p=><option key={p}>{p}</option>)}
+              </select></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Status</label>
+              <select className="inp" value={form.status} onChange={f('status')}>
+                {['active','expiring','expired','pending'].map(s=><option key={s}>{s}</option>)}
+              </select></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Expiration Date</label>
+              <input className="inp" type="date" value={form.expDate} onChange={f('expDate')}/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Required Documents (one per line)</label>
+              <textarea className="inp" rows={4} value={form.docs} onChange={f('docs')} placeholder="Background Check&#10;Flu Vaccine&#10;HIPAA Training"/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Notes</label>
+              <input className="inp" value={form.notes} onChange={f('notes')} placeholder="Additional notes or check-in instructions"/></div>
+            <div style={{display:'flex',gap:10}}>
+              <button className="btn-y" onClick={save}>Save</button>
+              <button className="btn-o" onClick={()=>{setShowForm(false);setEditId(null);}}>Cancel</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+// ── CRM ────────────────────────────────────────────────────────────────────
+function CRM({contacts,setContacts}) {
+  const [showForm,setShowForm]=useState(false);
+  const [editId,setEditId]=useState(null);
+  const [detail,setDetail]=useState(null);
+  const [filter,setFilter]=useState('all');
+  const [search,setSearch]=useState('');
+  const blank={name:'',title:'',hospital:'',phone:'',email:'',relationship:'cold',lastContact:'',nextFollowUp:'',notes:'',tags:''};
+  const [form,setForm]=useState(blank);
+  const [actNote,setActNote]=useState('');
+  const [actType,setActType]=useState('Call');
+  const f=k=>e=>setForm(prev=>({...prev,[k]:e.target.value}));
+
+  const relColor={cold:'#888',warm:'#f97316',hot:'#ef4444',partner:'#22c55e'};
+
+  const save=()=>{
+    if(!form.name)return;
+    const entry={id:editId||uid(),...form,tags:form.tags.split(',').map(t=>t.trim()).filter(Boolean),activities:editId?(contacts.find(c=>c.id===editId)?.activities||[]):[]};
+    if(editId)setContacts(prev=>prev.map(c=>c.id===editId?entry:c));
+    else setContacts(prev=>[...prev,entry]);
+    setShowForm(false);setEditId(null);setForm(blank);
+  };
+
+  const openEdit=c=>{setForm({...c,tags:c.tags?.join(', ')||''});setEditId(c.id);setShowForm(true);};
+  const del=id=>{setContacts(prev=>prev.filter(c=>c.id!==id));setDetail(null);};
+
+  const logActivity=cid=>{
+    if(!actNote)return;
+    const act={id:uid(),type:actType,note:actNote,date:new Date().toISOString()};
+    setContacts(prev=>prev.map(c=>c.id===cid?{...c,activities:[act,...(c.activities||[])],lastContact:act.date}:c));
+    setDetail(prev=>({...prev,activities:[act,...(prev.activities||[])],lastContact:act.date}));
+    setActNote('');
+  };
+
+  const filtered=contacts.filter(c=>{
+    const matchF=filter==='all'||c.relationship===filter;
+    const matchS=search===''||[c.name,c.hospital,c.title,c.email].some(s=>s?.toLowerCase().includes(search.toLowerCase()));
+    return matchF&&matchS;
+  });
+
+  const followUps=contacts.filter(c=>c.nextFollowUp&&daysUntil(c.nextFollowUp)<=3&&daysUntil(c.nextFollowUp)>=0);
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1200,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+        <div className="section-title">👥 CRM — Contact Manager</div>
+        <button className="btn-y" onClick={()=>setShowForm(true)}>+ Add Contact</button>
+      </div>
+
+      {followUps.length>0 && (
+        <div style={{background:'#1a1000',border:'1px solid #f97316',borderRadius:10,padding:12,marginBottom:16}}>
+          <div style={{color:'#f97316',fontWeight:700,fontSize:13,marginBottom:6}}>📞 Follow-ups Due Soon</div>
+          {followUps.map(c=>(
+            <span key={c.id} onClick={()=>setDetail(c)} style={{display:'inline-block',margin:'3px',padding:'4px 10px',background:'#2a1800',border:'1px solid #f97316',borderRadius:20,fontSize:12,cursor:'pointer',color:'#f97316'}}>
+              {c.name} · {fmtDateShort(c.nextFollowUp)}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:12,marginBottom:16}}>
+        <StatCard label="Total Contacts" value={contacts.length} icon="👥"/>
+        <StatCard label="Hot Accounts" value={contacts.filter(c=>c.relationship==='hot').length} icon="🔥" color="#ef4444"/>
+        <StatCard label="Partners" value={contacts.filter(c=>c.relationship==='partner').length} icon="🤝" color="#22c55e"/>
+        <StatCard label="Pending Follow-up" value={contacts.filter(c=>c.nextFollowUp&&daysUntil(c.nextFollowUp)<=7).length} icon="📞" color="#f97316"/>
+      </div>
+
+      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+        <input className="inp" style={{flex:1,minWidth:200}} placeholder="Search contacts..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        <div style={{display:'flex',gap:8}}>
+          {['all','cold','warm','hot','partner'].map(r=>(
+            <button key={r} onClick={()=>setFilter(r)}
+              className={filter===r?'btn-y':'btn-o'}
+              style={{fontSize:12,padding:'8px 14px',textTransform:'capitalize'}}>{r}</button>
+          ))}
+        </div>
+      </div>
+
+      <table>
+        <thead><tr>
+          <th>Name</th><th>Title</th><th>Hospital</th><th>Relationship</th><th>Last Contact</th><th>Follow-up</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          {filtered.map(c=>(
+            <tr key={c.id} style={{cursor:'pointer'}} onClick={()=>setDetail(c)}>
+              <td><strong>{c.name}</strong></td>
+              <td style={{color:'#aaa'}}>{c.title}</td>
+              <td style={{color:'#aaa'}}>{c.hospital}</td>
+              <td><span className="badge" style={{background:relColor[c.relationship],color:'#fff'}}>{c.relationship}</span></td>
+              <td style={{color:'#888',fontSize:12}}>{c.lastContact?fmtDateShort(c.lastContact):'—'}</td>
+              <td style={{color:c.nextFollowUp&&daysUntil(c.nextFollowUp)<=3?'#f97316':'#aaa',fontSize:12}}>{c.nextFollowUp?fmtDateShort(c.nextFollowUp):'—'}</td>
+              <td onClick={e=>e.stopPropagation()} style={{display:'flex',gap:6}}>
+                <button className="btn-o" style={{fontSize:11,padding:'4px 8px'}} onClick={()=>openEdit(c)}>Edit</button>
+                <button className="btn-r" style={{fontSize:11,padding:'4px 8px'}} onClick={()=>del(c.id)}>Del</button>
+              </td>
+            </tr>
+          ))}
+          {filtered.length===0 && <tr><td colSpan={7} style={{color:'#555',textAlign:'center',padding:30}}>No contacts match your filter.</td></tr>}
+        </tbody>
+      </table>
+
+      {detail && (
+        <Modal title={detail.name} onClose={()=>setDetail(null)}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+            {[['Title',detail.title],['Hospital',detail.hospital],['Phone',detail.phone],['Email',detail.email],['Relationship',detail.relationship]].map(([k,v])=>(
+              <div key={k}><div style={{fontSize:11,color:'#888'}}>{k}</div><div style={{fontSize:14,color:'#ddd'}}>{v||'—'}</div></div>
+            ))}
+          </div>
+          {detail.tags?.length>0 && <div style={{marginBottom:12}}>{detail.tags.map(t=><span key={t} className="badge badge-b" style={{margin:'2px'}}>{t}</span>)}</div>}
+          {detail.notes && <p style={{fontSize:13,color:'#aaa',marginBottom:16,background:'#2a2a2a',padding:10,borderRadius:8}}>{detail.notes}</p>}
+          <div style={{borderTop:'1px solid #2d2d2d',paddingTop:14,marginBottom:14}}>
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:13,marginBottom:10}}>📝 Log Activity</div>
+            <div style={{display:'flex',gap:8,marginBottom:8}}>
+              {['Call','Visit','Email','Demo','Other'].map(t=>(
+                <button key={t} onClick={()=>setActType(t)} className={actType===t?'btn-y':'btn-o'} style={{fontSize:12,padding:'6px 12px'}}>{t}</button>
+              ))}
+            </div>
+            <textarea className="inp" rows={2} value={actNote} onChange={e=>setActNote(e.target.value)} placeholder="Notes from this interaction..."/>
+            <button className="btn-y" style={{marginTop:8}} onClick={()=>logActivity(detail.id)}>Log Activity</button>
+          </div>
+          {detail.activities?.length>0 && (
+            <div>
+              <div style={{color:'#888',fontSize:13,fontWeight:600,marginBottom:8}}>Activity History</div>
+              {detail.activities.slice(0,5).map(a=>(
+                <div key={a.id} style={{padding:'8px',background:'#2a2a2a',borderRadius:8,marginBottom:6}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                    <span className="badge badge-b" style={{fontSize:10}}>{a.type}</span>
+                    <span style={{fontSize:11,color:'#555'}}>{fmtDate(a.date)}</span>
+                  </div>
+                  <div style={{fontSize:13,color:'#ccc'}}>{a.note}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Modal>
+      )}
+
+      {showForm && (
+        <Modal title={editId?'Edit Contact':'Add Contact'} onClose={()=>{setShowForm(false);setEditId(null);}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            {[['name','Name *'],['title','Title / Role'],['hospital','Hospital / Facility'],['phone','Phone'],['email','Email']].map(([k,l])=>(
+              <div key={k}><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>{l}</label>
+                <input className="inp" value={form[k]} onChange={f(k)} placeholder={l}/></div>
+            ))}
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Relationship Stage</label>
+              <select className="inp" value={form.relationship} onChange={f('relationship')}>
+                {['cold','warm','hot','partner'].map(r=><option key={r} value={r}>{r}</option>)}
+              </select></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Last Contact</label>
+              <input className="inp" type="date" value={form.lastContact} onChange={f('lastContact')}/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Next Follow-up</label>
+              <input className="inp" type="date" value={form.nextFollowUp} onChange={f('nextFollowUp')}/></div>
+            <div style={{gridColumn:'span 2'}}>
+              <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Tags (comma separated)</label>
+              <input className="inp" value={form.tags} onChange={f('tags')} placeholder="surgeon, mako user, key account"/></div>
+            <div style={{gridColumn:'span 2'}}>
+              <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Notes</label>
+              <textarea className="inp" rows={3} value={form.notes} onChange={f('notes')} placeholder="Background, preferences, key intel..."/></div>
+          </div>
+          <div style={{display:'flex',gap:10,marginTop:16}}>
+            <button className="btn-y" onClick={save}>Save Contact</button>
+            <button className="btn-o" onClick={()=>{setShowForm(false);setEditId(null);}}>Cancel</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+// ── TEAM HUB ───────────────────────────────────────────────────────────────
+function TeamHub({teamMembers,setTeamMembers}) {
+  const [showForm,setShowForm]=useState(false);
+  const [tab,setTab]=useState('overview');
+  const blank={name:'',role:'Associate Sales Rep',territory:'',startDate:'',goal1:'',goal2:'',goal3:'',wins:'',challenges:'',casesWeek:0,newContacts:0,makoUtilization:0};
+  const [form,setForm]=useState(blank);
+  const f=k=>e=>setForm(prev=>({...prev,[k]:e.target.value}));
+  const save=()=>{if(!form.name)return;setTeamMembers(prev=>[...prev,{id:uid(),...form,updatedAt:new Date().toISOString()}]);setShowForm(false);setForm(blank);};
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1100,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+        <div className="section-title">🤝 Team Hub</div>
+        <button className="btn-y" onClick={()=>setShowForm(true)}>+ Join Team</button>
+      </div>
+
+      <div style={{display:'flex',gap:8,marginBottom:20}}>
+        {['overview','members','leaderboard'].map(t=>(
+          <button key={t} onClick={()=>setTab(t)} className={tab===t?'btn-y':'btn-o'} style={{fontSize:12,padding:'8px 16px',textTransform:'capitalize'}}>{t}</button>
+        ))}
+      </div>
+
+      {tab==='overview' && (
+        <div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:16,marginBottom:20}}>
+            <StatCard label="Team Members" value={teamMembers.length} icon="👥"/>
+            <StatCard label="Avg Cases/Week" value={teamMembers.length?Math.round(teamMembers.reduce((a,m)=>a+Number(m.casesWeek||0),0)/teamMembers.length):0} icon="🔪"/>
+            <StatCard label="Total New Contacts" value={teamMembers.reduce((a,m)=>a+Number(m.newContacts||0),0)} icon="🤝" color="#22c55e"/>
+            <StatCard label="Avg Mako Util." value={teamMembers.length?Math.round(teamMembers.reduce((a,m)=>a+Number(m.makoUtilization||0),0)/teamMembers.length)+'%':'-'} icon="🤖" color="#3b82f6"/>
+          </div>
+          <div className="card">
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:12}}>📊 Weekly Team Progress</div>
+            {teamMembers.length===0
+              ? <div style={{color:'#555',fontSize:14}}>No team members yet. Be the first to join!</div>
+              : <table>
+                  <thead><tr><th>Name</th><th>Territory</th><th>Cases/Wk</th><th>New Contacts</th><th>Mako Util.</th><th>Updated</th></tr></thead>
+                  <tbody>{teamMembers.map(m=>(
+                    <tr key={m.id}>
+                      <td><strong>{m.name}</strong><div style={{fontSize:11,color:'#888'}}>{m.role}</div></td>
+                      <td style={{color:'#aaa'}}>{m.territory}</td>
+                      <td><span style={{color:'#FFC72C',fontWeight:700}}>{m.casesWeek}</span></td>
+                      <td>{m.newContacts}</td>
+                      <td>{m.makoUtilization}%</td>
+                      <td style={{fontSize:11,color:'#555'}}>{fmtDateShort(m.updatedAt)}</td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+            }
+          </div>
+        </div>
+      )}
+
+      {tab==='members' && (
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:16}}>
+          {teamMembers.map(m=>(
+            <div key={m.id} className="card">
+              <div style={{fontWeight:800,fontSize:16,marginBottom:2}}>{m.name}</div>
+              <div style={{color:'#888',fontSize:12,marginBottom:12}}>{m.role} · {m.territory}</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:12,textAlign:'center'}}>
+                <div><div style={{color:'#FFC72C',fontWeight:700,fontSize:18}}>{m.casesWeek}</div><div style={{fontSize:11,color:'#666'}}>Cases/Wk</div></div>
+                <div><div style={{color:'#22c55e',fontWeight:700,fontSize:18}}>{m.newContacts}</div><div style={{fontSize:11,color:'#666'}}>New Contacts</div></div>
+                <div><div style={{color:'#3b82f6',fontWeight:700,fontSize:18}}>{m.makoUtilization}%</div><div style={{fontSize:11,color:'#666'}}>Mako Util.</div></div>
+              </div>
+              {[m.goal1,m.goal2,m.goal3].filter(Boolean).map((g,i)=>(
+                <div key={i} style={{fontSize:12,color:'#aaa',padding:'4px 0',borderBottom:'1px solid #2a2a2a'}}>🎯 {g}</div>
+              ))}
+              {m.wins && <div style={{marginTop:8,fontSize:12,color:'#22c55e'}}>✅ {m.wins}</div>}
+              {m.challenges && <div style={{marginTop:4,fontSize:12,color:'#f97316'}}>⚠️ {m.challenges}</div>}
+            </div>
+          ))}
+          {teamMembers.length===0 && <div style={{color:'#555',fontSize:14}}>No team members yet.</div>}
+        </div>
+      )}
+
+      {tab==='leaderboard' && (
+        <div className="card">
+          <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:16}}>🏆 Team Leaderboard — Cases This Week</div>
+          {[...teamMembers].sort((a,b)=>Number(b.casesWeek)-Number(a.casesWeek)).map((m,i)=>(
+            <div key={m.id} style={{display:'flex',alignItems:'center',gap:16,padding:'12px 0',borderBottom:'1px solid #2a2a2a'}}>
+              <div style={{width:32,height:32,borderRadius:'50%',background:i===0?'#FFC72C':i===1?'#888':i===2?'#a16207':'#2a2a2a',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,color:i<3?'#111':'#666',fontSize:14}}>{i+1}</div>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:700}}>{m.name}</div>
+                <div style={{fontSize:12,color:'#888'}}>{m.territory}</div>
+              </div>
+              <div style={{textAlign:'right'}}>
+                <div style={{fontWeight:800,fontSize:20,color:'#FFC72C'}}>{m.casesWeek}</div>
+                <div style={{fontSize:11,color:'#666'}}>cases</div>
+              </div>
+            </div>
+          ))}
+          {teamMembers.length===0 && <div style={{color:'#555'}}>No data yet.</div>}
+        </div>
+      )}
+
+      {showForm && (
+        <Modal title="Join the Team" onClose={()=>setShowForm(false)}>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Your Name *</label><input className="inp" value={form.name} onChange={f('name')}/></div>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Role</label>
+                <select className="inp" value={form.role} onChange={f('role')}>
+                  {['Associate Sales Rep','Sales Rep','Senior Sales Rep','Sales Manager'].map(r=><option key={r}>{r}</option>)}
+                </select></div>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Territory</label><input className="inp" value={form.territory} onChange={f('territory')} placeholder="e.g. North Dallas"/></div>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Start Date</label><input className="inp" type="date" value={form.startDate} onChange={f('startDate')}/></div>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Cases This Week</label><input className="inp" type="number" value={form.casesWeek} onChange={f('casesWeek')}/></div>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>New Contacts This Week</label><input className="inp" type="number" value={form.newContacts} onChange={f('newContacts')}/></div>
+              <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Mako Utilization %</label><input className="inp" type="number" value={form.makoUtilization} onChange={f('makoUtilization')}/></div>
+            </div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Goal 1</label><input className="inp" value={form.goal1} onChange={f('goal1')} placeholder="e.g. Cover 5 Mako cases this month"/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Goal 2</label><input className="inp" value={form.goal2} onChange={f('goal2')} placeholder="e.g. Add 10 new contacts to CRM"/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>This Week's Win</label><input className="inp" value={form.wins} onChange={f('wins')} placeholder="e.g. Converted 1 new surgeon to Mako"/></div>
+            <div><label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Current Challenge</label><input className="inp" value={form.challenges} onChange={f('challenges')} placeholder="e.g. Credentialing pending at 2 hospitals"/></div>
+            <div style={{display:'flex',gap:10}}>
+              <button className="btn-y" onClick={save}>Join Team</button>
+              <button className="btn-o" onClick={()=>setShowForm(false)}>Cancel</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+// ── MANAGER REPORT ─────────────────────────────────────────────────────────
+function ManagerReport({contacts,trainingProgress,credentials}) {
+  const [report,setReport]=useState({casesThisWeek:'',newContacts:'',makoWins:'',makoGrowthIdea:'',challenges:'',supportNeeded:'',topWin:'',nextWeekFocus:''});
+  const [saved,setSaved]=useLS('cj_savedReports',[]);
+  const [preview,setPreview]=useState(false);
+  const r=k=>e=>setReport(prev=>({...prev,[k]:e.target.value}));
+
+  const trainingDone=Object.values(trainingProgress).filter(v=>v?.completed).length;
+  const d=today();
+  const nextSunday=new Date(d);nextSunday.setDate(d.getDate()+(7-d.getDay())%7||7);
+
+  const draft=`TO: Cody Crocker, Chanel Derr
+FROM: CJ — Associate Sales Rep, Joint Replacement, North Texas
+DATE: ${d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
+RE: Weekly Progress Report
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WEEKLY SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 CASES COVERED THIS WEEK:
+${report.casesThisWeek || '[Enter case details]'}
+
+🏆 TOP WIN OF THE WEEK:
+${report.topWin || '[Enter your top win]'}
+
+👥 NEW CONTACTS MADE:
+${report.newContacts || '[List new contacts]'}
+
+🤖 MAKO ACTIVITY & WINS:
+${report.makoWins || '[Mako case coverage, new adopters, utilization updates]'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MAKO GROWTH IDEA — NORTH TEXAS TERRITORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${report.makoGrowthIdea || '[Share your idea for growing Mako utilization in North Texas]'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHALLENGES & SUPPORT NEEDED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${report.challenges || '[Any blockers or challenges this week]'}
+
+Support requested: ${report.supportNeeded || '[What do you need from management?]'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEXT WEEK FOCUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${report.nextWeekFocus || '[Your priorities and targets for next week]'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AGENT METRICS (Auto-generated)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRM Contacts Logged: ${contacts.length}
+Training Modules Complete: ${trainingDone}/${Object.keys(DATA.trainingModules).length || 10}
+Active Credentials: ${credentials.filter(c=>c.status==='active').length}/${credentials.length}
+
+Respectfully submitted,
+CJ — ASR, Joint Replacement, North Texas
+Generated via CJ 3.0 Beta Agent`;
+
+  const saveReport=()=>{
+    setSaved(prev=>[{id:uid(),date:new Date().toISOString(),content:draft},...prev.slice(0,9)]);
+    setPreview(false);
+    alert('Report saved to archive!');
+  };
+
+  const copyReport=()=>{
+    navigator.clipboard.writeText(draft).then(()=>alert('Report copied to clipboard! Paste into email.'));
+  };
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1000,margin:'0 auto'}}>
+      <div className="section-title">📤 Weekly Manager Report</div>
+      <div style={{color:'#888',fontSize:13,marginBottom:20}}>
+        Reports send to <strong style={{color:'#FFC72C'}}>Cody Crocker</strong> & <strong style={{color:'#FFC72C'}}>Chanel Derr</strong> every Sunday.
+        Next Sunday: <strong style={{color:'#FFC72C'}}>{nextSunday.toLocaleDateString('en-US',{month:'long',day:'numeric'})}</strong>
+      </div>
+
+      {!preview ? (
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+          {[
+            ['casesThisWeek','📦 Cases Covered This Week','List each case: surgeon name, hospital, procedure type, notes','textarea'],
+            ['topWin','🏆 Top Win of the Week','Your biggest achievement or breakthrough this week','input'],
+            ['newContacts','👥 New Contacts Made','Names, titles, hospitals — who did you meet?','textarea'],
+            ['makoWins','🤖 Mako Activity & Wins','Mako cases covered, new surgeon interest, utilization notes','textarea'],
+            ['makoGrowthIdea','💡 Mako Growth Idea (North Texas)','Your idea for expanding Mako adoption in the territory','textarea'],
+            ['challenges','⚠️ Challenges This Week','Any blockers, frustrations, or difficult situations','textarea'],
+            ['supportNeeded','🙏 Support Needed from Management','What do you need from Cody or Chanel?','input'],
+            ['nextWeekFocus','🎯 Next Week Focus','Your main priorities and targets','textarea'],
+          ].map(([k,label,ph,type])=>(
+            <div key={k} style={{gridColumn:type==='textarea'?'auto':'auto'}}>
+              <label style={{fontSize:13,fontWeight:600,color:'#FFC72C',display:'block',marginBottom:6}}>{label}</label>
+              {type==='textarea'
+                ? <textarea className="inp" rows={3} value={report[k]} onChange={r(k)} placeholder={ph}/>
+                : <input className="inp" value={report[k]} onChange={r(k)} placeholder={ph}/>
+              }
+            </div>
+          ))}
+          <div style={{gridColumn:'span 2',display:'flex',gap:12,marginTop:8}}>
+            <button className="btn-y" onClick={()=>setPreview(true)}>Preview Report</button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div style={{display:'flex',gap:10,marginBottom:16}}>
+            <button className="btn-o" onClick={()=>setPreview(false)}>← Edit</button>
+            <button className="btn-y" onClick={copyReport}>📋 Copy to Clipboard</button>
+            <button className="btn-y" onClick={saveReport}>💾 Save to Archive</button>
+          </div>
+          <div style={{background:'#1a1a1a',border:'1px solid #2d2d2d',borderRadius:10,padding:24,fontFamily:'monospace',fontSize:13,lineHeight:1.8,whiteSpace:'pre-wrap',color:'#ddd'}}>
+            {draft}
+          </div>
+        </div>
+      )}
+
+      {saved.length>0 && (
+        <div style={{marginTop:32}}>
+          <div style={{color:'#888',fontWeight:700,fontSize:13,marginBottom:12,textTransform:'uppercase',letterSpacing:1}}>Saved Reports Archive</div>
+          {saved.map(s=>(
+            <div key={s.id} className="card" style={{marginBottom:10,cursor:'pointer'}} onClick={()=>{navigator.clipboard.writeText(s.content);alert('Copied!')}}>
+              <div style={{display:'flex',justifyContent:'space-between'}}>
+                <span style={{color:'#FFC72C',fontWeight:600}}>{fmtDate(s.date)}</span>
+                <span style={{color:'#555',fontSize:12}}>Click to copy</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── CHATBOT ────────────────────────────────────────────────────────────────
+function Chatbot() {
+  const [history,setHistory]=useLS('cj_chatHistory',[{role:'bot',msg:'👋 Hi! I\'m your CJ 3.0 Beta assistant. Ask me anything about your role, Mako, joint replacement, OR etiquette, credentialing, or sales strategies. I\'m here 24/7 to help you succeed!'}]);
+  const [input,setInput]=useState('');
+  const bottomRef=useRef();
+
+  useEffect(()=>bottomRef.current?.scrollIntoView({behavior:'smooth'}),[history]);
+
+  const respond=q=>{
+    const ql=q.toLowerCase();
+    const match=DATA.chatKnowledge.find(k=>k.keys.some(key=>ql.includes(key)));
+    return match?match.response:`Great question! For the most accurate info on "${q}", I recommend checking your Stryker training portal or asking your managers Cody Crocker or Chanel Derr directly. You can also head to the Training Hub for modules and quizzes. Is there something else I can help with — like Mako, credentialing, CRM, or sales tips?`;
+  };
+
+  const send=()=>{
+    if(!input.trim())return;
+    const q=input.trim();
+    setInput('');
+    setHistory(prev=>[...prev,{role:'user',msg:q}]);
+    setTimeout(()=>setHistory(prev=>[...prev,{role:'bot',msg:respond(q)}]),500);
+  };
+
+  const suggestions=['Tell me about Mako','How do I handle objections?','What credentials do I need?','How do I manage my territory?','Tips for OR etiquette','First 6 months plan'];
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:800,margin:'0 auto'}}>
+      <div className="section-title">💬 CJ Assistant</div>
+      <div style={{fontSize:13,color:'#666',marginBottom:16}}>Ask anything about your role, products, territory, or career growth.</div>
+
+      <div style={{background:'#161616',border:'1px solid #2d2d2d',borderRadius:12,padding:20,height:460,overflowY:'auto',display:'flex',flexDirection:'column',gap:12,marginBottom:14}}>
+        {history.map((h,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:h.role==='user'?'flex-end':'flex-start'}}>
+            <div className={h.role==='user'?'chat-bubble-user':'chat-bubble-bot'}>{h.msg}</div>
+          </div>
+        ))}
+        <div ref={bottomRef}/>
+      </div>
+
+      <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:12}}>
+        {suggestions.map(s=>(
+          <button key={s} onClick={()=>{setInput(s);setTimeout(()=>document.getElementById('chat-input')?.focus(),100)}}
+            className="btn-o" style={{fontSize:11,padding:'5px 12px'}}>{s}</button>
+        ))}
+      </div>
+
+      <div style={{display:'flex',gap:10}}>
+        <input id="chat-input" className="inp" value={input} onChange={e=>setInput(e.target.value)}
+          onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Ask anything... (Enter to send)"/>
+        <button className="btn-y" onClick={send} style={{whiteSpace:'nowrap'}}>Send →</button>
+        <button className="btn-o" onClick={()=>{if(confirm('Clear chat history?'))setHistory([{role:'bot',msg:'Chat cleared! How can I help you today?'}])}}>Clear</button>
+      </div>
+
+      <div style={{marginTop:16,padding:12,background:'#1a1a00',borderRadius:8,fontSize:12,color:'#666'}}>
+        ⚖️ This assistant provides general guidance based on publicly available knowledge. Always verify product-specific information with your official Stryker training materials and management team.
+      </div>
+    </div>
+  );
+}
+
+// ── METRICS ───────────────────────────────────────────────────────────────
+function Metrics({myMetrics,setMyMetrics,myTargets,setMyTargets}) {
+  const [sub,setSub]=useState('company');
+  const [showEntry,setShowEntry]=useState(false);
+  const [showTargets,setShowTargets]=useState(false);
+  const blankEntry={weekLabel:'',casesTotal:0,makoTotal:0,makoUtil:0,newContacts:0,surgeonCalls:0,newAccounts:0,notes:''};
+  const blankTargets={qCasesTarget:0,qMakoTarget:0,qContactsTarget:0,qRevenueTarget:'',annualQuota:'',notes:''};
+  const [entry,setEntry]=useState(blankEntry);
+  const [targetForm,setTargetForm]=useState(myTargets||blankTargets);
+  const e=k=>ev=>setEntry(prev=>({...prev,[k]:ev.target.value}));
+  const t=k=>ev=>setTargetForm(prev=>({...prev,[k]:ev.target.value}));
+
+  const saveEntry=()=>{
+    if(!entry.weekLabel)return;
+    setMyMetrics(prev=>[{id:uid(),date:new Date().toISOString(),...entry},...prev]);
+    setEntry(blankEntry);setShowEntry(false);
+  };
+  const saveTargets=()=>{setMyTargets(targetForm);setShowTargets(false);};
+  const delEntry=id=>setMyMetrics(prev=>prev.filter(m=>m.id!==id));
+
+  // Aggregate totals from all entries
+  const totals=myMetrics.reduce((a,m)=>({
+    cases:a.cases+Number(m.casesTotal||0),
+    mako:a.mako+Number(m.makoTotal||0),
+    contacts:a.contacts+Number(m.newContacts||0),
+    calls:a.calls+Number(m.surgeonCalls||0),
+    accounts:a.accounts+Number(m.newAccounts||0),
+  }),{cases:0,mako:0,contacts:0,calls:0,accounts:0});
+
+  const avgUtil=myMetrics.length
+    ?Math.round(myMetrics.reduce((a,m)=>a+Number(m.makoUtil||0),0)/myMetrics.length)
+    :0;
+
+  const pctOf=(val,target)=>target>0?Math.min(100,Math.round(Number(val)/Number(target)*100)):0;
+
+  const subTabs=[
+    {id:'company',label:'🏢 Stryker Company'},
+    {id:'mako',label:'🤖 Mako Clinical Data'},
+    {id:'myperf',label:'📋 My Performance'},
+    {id:'targets',label:'🎯 My Targets'},
+  ];
+
+  const D=DATA.strykerPublicData;
+  const C=DATA.makoClinicData;
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1200,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12,marginBottom:20}}>
+        <div>
+          <div className="section-title">📈 Metrics Dashboard</div>
+          <div style={{fontSize:12,color:'#555'}}>Public data · Clinical literature · Personal performance · Internal targets</div>
+        </div>
+      </div>
+
+      {/* Sub-nav */}
+      <div style={{display:'flex',gap:8,marginBottom:24,flexWrap:'wrap'}}>
+        {subTabs.map(s=>(
+          <button key={s.id} onClick={()=>setSub(s.id)}
+            className={sub===s.id?'btn-y':'btn-o'}
+            style={{fontSize:12,padding:'8px 16px'}}>{s.label}</button>
+        ))}
+      </div>
+
+      {/* ── STRYKER COMPANY METRICS ── */}
+      {sub==='company' && (
+        <div className="fade-in">
+          <div style={{padding:'10px 16px',background:'#1a1a00',border:'1px solid #3d3d00',borderRadius:8,marginBottom:20,fontSize:12,color:'#888',lineHeight:1.6}}>
+            ⚖️ <strong style={{color:'#FFC72C'}}>Source:</strong> {D.disclaimer}
+            {' '}<a href={`https://${D.source}`} target="_blank" rel="noopener noreferrer" style={{color:'#3b82f6'}}>→ {D.source}</a>
+            {' '}· Last reference period: <span style={{color:'#FFC72C'}}>{D.lastUpdated}</span>
+          </div>
+
+          <div style={{marginBottom:28}}>
+            <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>Company Financial Overview</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:12}}>
+              {D.companyOverview.map((m,i)=>(
+                <div key={i} className="stat-card" style={{borderLeft:`3px solid ${m.color}`,textAlign:'left',padding:'14px 16px'}}>
+                  <div style={{fontSize:11,color:'#666',marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{m.label}</div>
+                  <div style={{fontSize:24,fontWeight:800,color:m.color}}>{m.value}</div>
+                  {m.delta&&<div style={{fontSize:11,color:'#888',marginTop:4}}>{m.delta}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{marginBottom:28}}>
+            <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>Mako Platform Stats</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:12}}>
+              {D.makoStats.map((m,i)=>(
+                <div key={i} className="stat-card" style={{borderLeft:`3px solid ${m.color}`,textAlign:'left',padding:'14px 16px'}}>
+                  <div style={{fontSize:11,color:'#666',marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{m.label}</div>
+                  <div style={{fontSize:22,fontWeight:800,color:m.color}}>{m.value}</div>
+                  {m.delta&&<div style={{fontSize:11,color:'#888',marginTop:4}}>{m.delta}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>Market Context — North Texas</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:12}}>
+              {D.marketContext.map((m,i)=>(
+                <div key={i} className="stat-card" style={{borderLeft:`3px solid ${m.color}`,textAlign:'left',padding:'14px 16px'}}>
+                  <div style={{fontSize:11,color:'#666',marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{m.label}</div>
+                  <div style={{fontSize:22,fontWeight:800,color:m.color}}>{m.value}</div>
+                  {m.delta&&<div style={{fontSize:11,color:'#888',marginTop:4}}>{m.delta}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MAKO CLINICAL DATA ── */}
+      {sub==='mako' && (
+        <div className="fade-in">
+          <div style={{padding:'10px 16px',background:'#1a1a00',border:'1px solid #3d3d00',borderRadius:8,marginBottom:20,fontSize:12,color:'#888',lineHeight:1.6}}>
+            ⚖️ {C.disclaimer}
+          </div>
+
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(340px,1fr))',gap:16,marginBottom:32}}>
+            {C.keyStats.map((s,i)=>(
+              <div key={i} className="card" style={{borderLeft:`4px solid ${s.color}`}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8,flexWrap:'wrap',gap:6}}>
+                  <div style={{fontWeight:700,fontSize:14,color:'#fff',flex:1}}>{s.stat}</div>
+                  <span style={{background:s.color,color:'#111',borderRadius:20,padding:'2px 10px',fontSize:11,fontWeight:700,whiteSpace:'nowrap'}}>{s.value}</span>
+                </div>
+                <p style={{fontSize:13,color:'#aaa',lineHeight:1.6,marginBottom:10}}>{s.detail}</p>
+                <div style={{fontSize:11,color:'#555',marginBottom:6}}>📚 {s.source}</div>
+                <a href={s.pubmedUrl} target="_blank" rel="noopener noreferrer"
+                  style={{fontSize:11,color:'#3b82f6',textDecoration:'none'}}>→ View on PubMed / Source</a>
+              </div>
+            ))}
+          </div>
+
+          <div className="card" style={{background:'#111d11',borderColor:'#1a3a1a'}}>
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:16}}>💬 Clinical Talk Tracks — Objection Handling with Data</div>
+            {C.talkTracks.map((tt,i)=>(
+              <div key={i} style={{marginBottom:16,padding:14,background:'#1a2a1a',border:'1px solid #2a4a2a',borderRadius:10}}>
+                <div style={{color:'#f97316',fontWeight:700,fontSize:13,marginBottom:8}}>Surgeon says: "{tt.objection}"</div>
+                <div style={{fontSize:13,color:'#ccc',lineHeight:1.6}}>✅ <strong style={{color:'#FFC72C'}}>Your response:</strong> {tt.response}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── MY PERFORMANCE ── */}
+      {sub==='myperf' && (
+        <div className="fade-in">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:10}}>
+            <div style={{color:'#888',fontSize:13}}>Log your weekly numbers — track trends over time.</div>
+            <button className="btn-y" onClick={()=>setShowEntry(true)}>+ Log This Week</button>
+          </div>
+
+          {/* Totals */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:12,marginBottom:24}}>
+            <StatCard label="Total Cases Covered" value={totals.cases} icon="🔪" color="#FFC72C"/>
+            <StatCard label="Total Mako Cases" value={totals.mako} icon="🤖" color="#3b82f6"/>
+            <StatCard label="Avg Mako Util %" value={`${avgUtil}%`} icon="📊" color={avgUtil>=70?'#22c55e':avgUtil>=40?'#f97316':'#ef4444'}/>
+            <StatCard label="New Contacts" value={totals.contacts} icon="👥" color="#22c55e"/>
+            <StatCard label="Surgeon Calls" value={totals.calls} icon="📞" color="#8b5cf6"/>
+            <StatCard label="New Accounts" value={totals.accounts} icon="🏥" color="#FFC72C"/>
+          </div>
+
+          {/* Weekly log table */}
+          {myMetrics.length>0 ? (
+            <div>
+              <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:10}}>Weekly Log</div>
+
+              {/* Simple trend bar chart */}
+              <div className="card" style={{marginBottom:20}}>
+                <div style={{color:'#FFC72C',fontWeight:700,fontSize:13,marginBottom:12}}>📊 Cases Per Week — Visual Trend</div>
+                <div style={{display:'flex',alignItems:'flex-end',gap:8,height:100,overflow:'hidden'}}>
+                  {[...myMetrics].reverse().slice(0,12).map((m,i)=>{
+                    const max=Math.max(...myMetrics.map(x=>Number(x.casesTotal||0)),1);
+                    const h=Math.max(4,Math.round((Number(m.casesTotal||0)/max)*90));
+                    return (
+                      <div key={i} title={`${m.weekLabel}: ${m.casesTotal} cases`}
+                        style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                        <div style={{fontSize:9,color:'#888'}}>{m.casesTotal}</div>
+                        <div style={{width:'100%',height:h,background:'linear-gradient(0deg,#FFC72C,#FFD700)',borderRadius:'3px 3px 0 0',minHeight:4}}/>
+                        <div style={{fontSize:8,color:'#555',whiteSpace:'nowrap',overflow:'hidden',maxWidth:40,textOverflow:'ellipsis'}}>{m.weekLabel}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <table>
+                <thead><tr><th>Week</th><th>Cases</th><th>Mako</th><th>Util %</th><th>New Contacts</th><th>Surgeon Calls</th><th>New Accounts</th><th></th></tr></thead>
+                <tbody>
+                  {myMetrics.map(m=>(
+                    <tr key={m.id}>
+                      <td><strong>{m.weekLabel}</strong><div style={{fontSize:10,color:'#555'}}>{fmtDateShort(m.date)}</div></td>
+                      <td><span style={{color:'#FFC72C',fontWeight:700}}>{m.casesTotal}</span></td>
+                      <td>{m.makoTotal}</td>
+                      <td>
+                        <div style={{display:'flex',alignItems:'center',gap:6}}>
+                          <div className="prog" style={{width:50,height:6,display:'inline-block'}}>
+                            <div className="prog-fill" style={{width:`${m.makoUtil||0}%`}}/>
+                          </div>
+                          <span style={{fontSize:12,color:Number(m.makoUtil)>=70?'#22c55e':Number(m.makoUtil)>=40?'#f97316':'#ef4444'}}>{m.makoUtil}%</span>
+                        </div>
+                      </td>
+                      <td>{m.newContacts}</td>
+                      <td>{m.surgeonCalls}</td>
+                      <td>{m.newAccounts}</td>
+                      <td>
+                        <button onClick={()=>delEntry(m.id)} className="btn-r" style={{fontSize:11,padding:'3px 8px'}}>✕</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="card" style={{textAlign:'center',padding:48,color:'#555'}}>
+              <div style={{fontSize:32,marginBottom:12}}>📋</div>
+              <div style={{fontSize:15,marginBottom:8}}>No weekly data yet.</div>
+              <div style={{fontSize:13,marginBottom:20}}>Log your first week to start tracking trends.</div>
+              <button className="btn-y" onClick={()=>setShowEntry(true)}>Log This Week</button>
+            </div>
+          )}
+
+          {showEntry && (
+            <Modal title="Log Weekly Performance" onClose={()=>setShowEntry(false)}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                <div style={{gridColumn:'span 2'}}>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Week Label *</label>
+                  <input className="inp" value={entry.weekLabel} onChange={e(('weekLabel'))} placeholder="e.g. Week of Mar 10, or Week 3"/>
+                </div>
+                {[
+                  ['casesTotal','Total Cases Covered','How many total OR cases this week?'],
+                  ['makoTotal','Mako Cases','How many were Mako-assisted?'],
+                  ['makoUtil','Mako Utilization %','% of eligible cases done with Mako (0–100)'],
+                  ['newContacts','New CRM Contacts','How many new contacts logged?'],
+                  ['surgeonCalls','Surgeon / Office Calls','Office visits or cold calls made'],
+                  ['newAccounts','New Accounts Opened','New hospital or practice relationships started'],
+                ].map(([k,label,ph])=>(
+                  <div key={k}>
+                    <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>{label}</label>
+                    <input className="inp" type="number" min="0" value={entry[k]} onChange={e(k)} placeholder={ph}/>
+                  </div>
+                ))}
+                <div style={{gridColumn:'span 2'}}>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Notes / Highlights</label>
+                  <textarea className="inp" rows={3} value={entry.notes} onChange={e('notes')} placeholder="Key wins, challenges, anything notable this week..."/>
+                </div>
+              </div>
+              <div style={{display:'flex',gap:10,marginTop:16}}>
+                <button className="btn-y" onClick={saveEntry}>Save Entry</button>
+                <button className="btn-o" onClick={()=>setShowEntry(false)}>Cancel</button>
+              </div>
+            </Modal>
+          )}
+        </div>
+      )}
+
+      {/* ── MY TARGETS ── */}
+      {sub==='targets' && (
+        <div className="fade-in">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:10}}>
+            <div style={{color:'#888',fontSize:13}}>Enter your targets manually. Tracks your progress vs. goals. <span style={{color:'#FFC72C'}}>Your data stays local — never sent anywhere.</span></div>
+            <button className="btn-y" onClick={()=>setShowTargets(true)}>
+              {myTargets?'Update Targets':'Set My Targets'}
+            </button>
+          </div>
+
+          {myTargets && (Number(myTargets.qCasesTarget)>0||Number(myTargets.qContactsTarget)>0||Number(myTargets.qMakoTarget)>0) ? (
+            <div>
+              {/* Aggregate actuals */}
+              {(()=>{
+                const actCases=myMetrics.reduce((a,m)=>a+Number(m.casesTotal||0),0);
+                const actMako=myMetrics.reduce((a,m)=>a+Number(m.makoTotal||0),0);
+                const actContacts=myMetrics.reduce((a,m)=>a+Number(m.newContacts||0),0);
+                const targets=[
+                  {label:'Cases Covered',actual:actCases,target:myTargets.qCasesTarget,icon:'🔪',color:'#FFC72C'},
+                  {label:'Mako Cases',actual:actMako,target:myTargets.qMakoTarget,icon:'🤖',color:'#3b82f6'},
+                  {label:'New Contacts',actual:actContacts,target:myTargets.qContactsTarget,icon:'👥',color:'#22c55e'},
+                ];
+                return (
+                  <div>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:16,marginBottom:24}}>
+                      {targets.map(tgt=>{
+                        const pct=pctOf(tgt.actual,tgt.target);
+                        return(
+                          <div key={tgt.label} className="card" style={{borderLeft:`4px solid ${tgt.color}`}}>
+                            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                              <div style={{fontWeight:700,fontSize:14}}>{tgt.icon} {tgt.label}</div>
+                              <span style={{fontSize:20,fontWeight:800,color:tgt.color}}>{pct}%</span>
+                            </div>
+                            <ProgressBar pct={pct}/>
+                            <div style={{display:'flex',justifyContent:'space-between',marginTop:8,fontSize:13,color:'#aaa'}}>
+                              <span>Actual: <strong style={{color:'#fff'}}>{tgt.actual}</strong></span>
+                              <span>Target: <strong style={{color:tgt.color}}>{tgt.target}</strong></span>
+                              <span>Gap: <strong style={{color:pct>=100?'#22c55e':'#f97316'}}>{Math.max(0,Number(tgt.target)-tgt.actual)}</strong></span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="card">
+                      <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:14}}>📋 Target Summary</div>
+                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                        {myTargets.annualQuota&&<div style={{marginBottom:10}}><div style={{fontSize:12,color:'#888'}}>Annual Quota</div><div style={{fontSize:18,fontWeight:700,color:'#FFC72C'}}>{myTargets.annualQuota}</div></div>}
+                        {myTargets.qRevenueTarget&&<div style={{marginBottom:10}}><div style={{fontSize:12,color:'#888'}}>Quarterly Revenue Target</div><div style={{fontSize:18,fontWeight:700,color:'#FFC72C'}}>{myTargets.qRevenueTarget}</div></div>}
+                      </div>
+                      {myTargets.notes&&<div style={{marginTop:10,padding:10,background:'#2a2a2a',borderRadius:8,fontSize:13,color:'#aaa'}}>{myTargets.notes}</div>}
+                      <div style={{marginTop:14,padding:12,background:'#1a1a00',borderRadius:8,fontSize:12,color:'#555'}}>
+                        🔒 Your targets are stored locally in your browser only. They are never uploaded or shared.
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+            <div className="card" style={{textAlign:'center',padding:48,color:'#555'}}>
+              <div style={{fontSize:32,marginBottom:12}}>🎯</div>
+              <div style={{fontSize:15,marginBottom:8}}>No targets set yet.</div>
+              <div style={{fontSize:13,marginBottom:20}}>Enter your quarterly targets to track progress. All data stays in your browser.</div>
+              <button className="btn-y" onClick={()=>setShowTargets(true)}>Set My Targets</button>
+            </div>
+          )}
+
+          {showTargets && (
+            <Modal title="Set My Targets" onClose={()=>setShowTargets(false)}>
+              <div style={{fontSize:12,color:'#888',marginBottom:14,padding:10,background:'#1a1a00',borderRadius:8}}>
+                🔒 These numbers are stored locally in your browser only. They are never sent to any server.
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                {[
+                  ['qCasesTarget','Quarterly Cases Target','How many cases to cover this quarter?'],
+                  ['qMakoTarget','Quarterly Mako Cases Target','Target Mako cases for the quarter'],
+                  ['qContactsTarget','Quarterly New Contacts Target','New contacts to add to CRM'],
+                ].map(([k,label,ph])=>(
+                  <div key={k}>
+                    <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>{label}</label>
+                    <input className="inp" type="number" min="0" value={targetForm[k]} onChange={t(k)} placeholder={ph}/>
+                  </div>
+                ))}
+                <div>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Annual Quota (enter how you like — $ or units)</label>
+                  <input className="inp" value={targetForm.annualQuota} onChange={t('annualQuota')} placeholder="e.g. $500,000 or 120 cases"/>
+                </div>
+                <div>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Quarterly Revenue Target</label>
+                  <input className="inp" value={targetForm.qRevenueTarget} onChange={t('qRevenueTarget')} placeholder="e.g. $125,000"/>
+                </div>
+                <div>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Notes</label>
+                  <textarea className="inp" rows={2} value={targetForm.notes} onChange={t('notes')} placeholder="Any context about your targets..."/>
+                </div>
+                <div style={{display:'flex',gap:10}}>
+                  <button className="btn-y" onClick={saveTargets}>Save Targets</button>
+                  <button className="btn-o" onClick={()=>setShowTargets(false)}>Cancel</button>
+                </div>
+              </div>
+            </Modal>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── MAIN APP ───────────────────────────────────────────────────────────────
+function App() {
+  const [tab,setTab]=useState('dashboard');
+  const [user]=useLS('cj_user',{name:'CJ',startDate:'2026-03-04',territory:'North Texas',managers:['Cody Crocker','Chanel Derr'],role:'Associate Sales Representative — Joint Replacement'});
+  const [contacts,setContacts]=useLS('cj_contacts',[]);
+  const [credentials,setCredentials]=useLS('cj_credentials',DATA.defaultCredentials);
+  const [trainingProgress,setTrainingProgress]=useLS('cj_training',{});
+  const [teamMembers,setTeamMembers]=useLS('cj_team',[]);
+  const [myMetrics,setMyMetrics]=useLS('cj_myMetrics',[]);
+  const [myTargets,setMyTargets]=useLS('cj_myTargets',null);
+
+  const renderTab=()=>{
+    switch(tab){
+      case 'dashboard': return <Dashboard contacts={contacts} credentials={credentials} trainingProgress={trainingProgress} user={user}/>;
+      case 'training': return <Training trainingProgress={trainingProgress} setTrainingProgress={setTrainingProgress}/>;
+      case 'intel': return <IntelReport/>;
+      case 'roadmap': return <Roadmap user={user} trainingProgress={trainingProgress}/>;
+      case 'metrics': return <Metrics myMetrics={myMetrics} setMyMetrics={setMyMetrics} myTargets={myTargets} setMyTargets={setMyTargets}/>;
+      case 'creds': return <Credentialing credentials={credentials} setCredentials={setCredentials}/>;
+      case 'crm': return <CRM contacts={contacts} setContacts={setContacts}/>;
+      case 'team': return <TeamHub teamMembers={teamMembers} setTeamMembers={setTeamMembers}/>;
+      case 'report': return <ManagerReport contacts={contacts} trainingProgress={trainingProgress} credentials={credentials}/>;
+      case 'chat': return <Chatbot/>;
+      default: return null;
+    }
+  };
+
+  return (
+    <div style={{minHeight:'100vh'}}>
+      <Header user={user}/>
+      <Nav active={tab} setActive={setTab}/>
+      <main style={{minHeight:'calc(100vh - 120px)'}}>
+        {renderTab()}
+      </main>
+      <footer style={{borderTop:'1px solid #2a2a2a',padding:'12px 24px',textAlign:'center',fontSize:11,color:'#444'}}>
+        CJ 3.0 Beta — Personal Sales Agent · North Texas Joint Replacement Territory · Powered by publicly available knowledge only.
+        Not affiliated with or endorsed by Stryker Corporation. Does not access internal Stryker systems or proprietary data.
+        Maintenance window: 1:00–1:30 AM CT daily.
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
