@@ -141,6 +141,7 @@ const TABS = [
   {id:'training',label:'🎓 Training'},
   {id:'intel',label:'📰 Intel Report'},
   {id:'roadmap',label:'🗓 6-Month Plan'},
+  {id:'metrics',label:'📈 Metrics'},
   {id:'creds',label:'📋 Credentialing'},
   {id:'crm',label:'👥 CRM'},
   {id:'team',label:'🤝 Team Hub'},
@@ -1207,6 +1208,374 @@ function Chatbot() {
   );
 }
 
+// ── METRICS ───────────────────────────────────────────────────────────────
+function Metrics({myMetrics,setMyMetrics,myTargets,setMyTargets}) {
+  const [sub,setSub]=useState('company');
+  const [showEntry,setShowEntry]=useState(false);
+  const [showTargets,setShowTargets]=useState(false);
+  const blankEntry={weekLabel:'',casesTotal:0,makoTotal:0,makoUtil:0,newContacts:0,surgeonCalls:0,newAccounts:0,notes:''};
+  const blankTargets={qCasesTarget:0,qMakoTarget:0,qContactsTarget:0,qRevenueTarget:'',annualQuota:'',notes:''};
+  const [entry,setEntry]=useState(blankEntry);
+  const [targetForm,setTargetForm]=useState(myTargets||blankTargets);
+  const e=k=>ev=>setEntry(prev=>({...prev,[k]:ev.target.value}));
+  const t=k=>ev=>setTargetForm(prev=>({...prev,[k]:ev.target.value}));
+
+  const saveEntry=()=>{
+    if(!entry.weekLabel)return;
+    setMyMetrics(prev=>[{id:uid(),date:new Date().toISOString(),...entry},...prev]);
+    setEntry(blankEntry);setShowEntry(false);
+  };
+  const saveTargets=()=>{setMyTargets(targetForm);setShowTargets(false);};
+  const delEntry=id=>setMyMetrics(prev=>prev.filter(m=>m.id!==id));
+
+  // Aggregate totals from all entries
+  const totals=myMetrics.reduce((a,m)=>({
+    cases:a.cases+Number(m.casesTotal||0),
+    mako:a.mako+Number(m.makoTotal||0),
+    contacts:a.contacts+Number(m.newContacts||0),
+    calls:a.calls+Number(m.surgeonCalls||0),
+    accounts:a.accounts+Number(m.newAccounts||0),
+  }),{cases:0,mako:0,contacts:0,calls:0,accounts:0});
+
+  const avgUtil=myMetrics.length
+    ?Math.round(myMetrics.reduce((a,m)=>a+Number(m.makoUtil||0),0)/myMetrics.length)
+    :0;
+
+  const pctOf=(val,target)=>target>0?Math.min(100,Math.round(Number(val)/Number(target)*100)):0;
+
+  const subTabs=[
+    {id:'company',label:'🏢 Stryker Company'},
+    {id:'mako',label:'🤖 Mako Clinical Data'},
+    {id:'myperf',label:'📋 My Performance'},
+    {id:'targets',label:'🎯 My Targets'},
+  ];
+
+  const D=DATA.strykerPublicData;
+  const C=DATA.makoClinicData;
+
+  return (
+    <div className="fade-in" style={{padding:24,maxWidth:1200,margin:'0 auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12,marginBottom:20}}>
+        <div>
+          <div className="section-title">📈 Metrics Dashboard</div>
+          <div style={{fontSize:12,color:'#555'}}>Public data · Clinical literature · Personal performance · Internal targets</div>
+        </div>
+      </div>
+
+      {/* Sub-nav */}
+      <div style={{display:'flex',gap:8,marginBottom:24,flexWrap:'wrap'}}>
+        {subTabs.map(s=>(
+          <button key={s.id} onClick={()=>setSub(s.id)}
+            className={sub===s.id?'btn-y':'btn-o'}
+            style={{fontSize:12,padding:'8px 16px'}}>{s.label}</button>
+        ))}
+      </div>
+
+      {/* ── STRYKER COMPANY METRICS ── */}
+      {sub==='company' && (
+        <div className="fade-in">
+          <div style={{padding:'10px 16px',background:'#1a1a00',border:'1px solid #3d3d00',borderRadius:8,marginBottom:20,fontSize:12,color:'#888',lineHeight:1.6}}>
+            ⚖️ <strong style={{color:'#FFC72C'}}>Source:</strong> {D.disclaimer}
+            {' '}<a href={`https://${D.source}`} target="_blank" rel="noopener noreferrer" style={{color:'#3b82f6'}}>→ {D.source}</a>
+            {' '}· Last reference period: <span style={{color:'#FFC72C'}}>{D.lastUpdated}</span>
+          </div>
+
+          <div style={{marginBottom:28}}>
+            <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>Company Financial Overview</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:12}}>
+              {D.companyOverview.map((m,i)=>(
+                <div key={i} className="stat-card" style={{borderLeft:`3px solid ${m.color}`,textAlign:'left',padding:'14px 16px'}}>
+                  <div style={{fontSize:11,color:'#666',marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{m.label}</div>
+                  <div style={{fontSize:24,fontWeight:800,color:m.color}}>{m.value}</div>
+                  {m.delta&&<div style={{fontSize:11,color:'#888',marginTop:4}}>{m.delta}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{marginBottom:28}}>
+            <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>Mako Platform Stats</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:12}}>
+              {D.makoStats.map((m,i)=>(
+                <div key={i} className="stat-card" style={{borderLeft:`3px solid ${m.color}`,textAlign:'left',padding:'14px 16px'}}>
+                  <div style={{fontSize:11,color:'#666',marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{m.label}</div>
+                  <div style={{fontSize:22,fontWeight:800,color:m.color}}>{m.value}</div>
+                  {m.delta&&<div style={{fontSize:11,color:'#888',marginTop:4}}>{m.delta}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:12}}>Market Context — North Texas</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:12}}>
+              {D.marketContext.map((m,i)=>(
+                <div key={i} className="stat-card" style={{borderLeft:`3px solid ${m.color}`,textAlign:'left',padding:'14px 16px'}}>
+                  <div style={{fontSize:11,color:'#666',marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{m.label}</div>
+                  <div style={{fontSize:22,fontWeight:800,color:m.color}}>{m.value}</div>
+                  {m.delta&&<div style={{fontSize:11,color:'#888',marginTop:4}}>{m.delta}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MAKO CLINICAL DATA ── */}
+      {sub==='mako' && (
+        <div className="fade-in">
+          <div style={{padding:'10px 16px',background:'#1a1a00',border:'1px solid #3d3d00',borderRadius:8,marginBottom:20,fontSize:12,color:'#888',lineHeight:1.6}}>
+            ⚖️ {C.disclaimer}
+          </div>
+
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(340px,1fr))',gap:16,marginBottom:32}}>
+            {C.keyStats.map((s,i)=>(
+              <div key={i} className="card" style={{borderLeft:`4px solid ${s.color}`}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8,flexWrap:'wrap',gap:6}}>
+                  <div style={{fontWeight:700,fontSize:14,color:'#fff',flex:1}}>{s.stat}</div>
+                  <span style={{background:s.color,color:'#111',borderRadius:20,padding:'2px 10px',fontSize:11,fontWeight:700,whiteSpace:'nowrap'}}>{s.value}</span>
+                </div>
+                <p style={{fontSize:13,color:'#aaa',lineHeight:1.6,marginBottom:10}}>{s.detail}</p>
+                <div style={{fontSize:11,color:'#555',marginBottom:6}}>📚 {s.source}</div>
+                <a href={s.pubmedUrl} target="_blank" rel="noopener noreferrer"
+                  style={{fontSize:11,color:'#3b82f6',textDecoration:'none'}}>→ View on PubMed / Source</a>
+              </div>
+            ))}
+          </div>
+
+          <div className="card" style={{background:'#111d11',borderColor:'#1a3a1a'}}>
+            <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:16}}>💬 Clinical Talk Tracks — Objection Handling with Data</div>
+            {C.talkTracks.map((tt,i)=>(
+              <div key={i} style={{marginBottom:16,padding:14,background:'#1a2a1a',border:'1px solid #2a4a2a',borderRadius:10}}>
+                <div style={{color:'#f97316',fontWeight:700,fontSize:13,marginBottom:8}}>Surgeon says: "{tt.objection}"</div>
+                <div style={{fontSize:13,color:'#ccc',lineHeight:1.6}}>✅ <strong style={{color:'#FFC72C'}}>Your response:</strong> {tt.response}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── MY PERFORMANCE ── */}
+      {sub==='myperf' && (
+        <div className="fade-in">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:10}}>
+            <div style={{color:'#888',fontSize:13}}>Log your weekly numbers — track trends over time.</div>
+            <button className="btn-y" onClick={()=>setShowEntry(true)}>+ Log This Week</button>
+          </div>
+
+          {/* Totals */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:12,marginBottom:24}}>
+            <StatCard label="Total Cases Covered" value={totals.cases} icon="🔪" color="#FFC72C"/>
+            <StatCard label="Total Mako Cases" value={totals.mako} icon="🤖" color="#3b82f6"/>
+            <StatCard label="Avg Mako Util %" value={`${avgUtil}%`} icon="📊" color={avgUtil>=70?'#22c55e':avgUtil>=40?'#f97316':'#ef4444'}/>
+            <StatCard label="New Contacts" value={totals.contacts} icon="👥" color="#22c55e"/>
+            <StatCard label="Surgeon Calls" value={totals.calls} icon="📞" color="#8b5cf6"/>
+            <StatCard label="New Accounts" value={totals.accounts} icon="🏥" color="#FFC72C"/>
+          </div>
+
+          {/* Weekly log table */}
+          {myMetrics.length>0 ? (
+            <div>
+              <div style={{color:'#888',fontWeight:700,fontSize:12,textTransform:'uppercase',letterSpacing:1,marginBottom:10}}>Weekly Log</div>
+
+              {/* Simple trend bar chart */}
+              <div className="card" style={{marginBottom:20}}>
+                <div style={{color:'#FFC72C',fontWeight:700,fontSize:13,marginBottom:12}}>📊 Cases Per Week — Visual Trend</div>
+                <div style={{display:'flex',alignItems:'flex-end',gap:8,height:100,overflow:'hidden'}}>
+                  {[...myMetrics].reverse().slice(0,12).map((m,i)=>{
+                    const max=Math.max(...myMetrics.map(x=>Number(x.casesTotal||0)),1);
+                    const h=Math.max(4,Math.round((Number(m.casesTotal||0)/max)*90));
+                    return (
+                      <div key={i} title={`${m.weekLabel}: ${m.casesTotal} cases`}
+                        style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                        <div style={{fontSize:9,color:'#888'}}>{m.casesTotal}</div>
+                        <div style={{width:'100%',height:h,background:'linear-gradient(0deg,#FFC72C,#FFD700)',borderRadius:'3px 3px 0 0',minHeight:4}}/>
+                        <div style={{fontSize:8,color:'#555',whiteSpace:'nowrap',overflow:'hidden',maxWidth:40,textOverflow:'ellipsis'}}>{m.weekLabel}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <table>
+                <thead><tr><th>Week</th><th>Cases</th><th>Mako</th><th>Util %</th><th>New Contacts</th><th>Surgeon Calls</th><th>New Accounts</th><th></th></tr></thead>
+                <tbody>
+                  {myMetrics.map(m=>(
+                    <tr key={m.id}>
+                      <td><strong>{m.weekLabel}</strong><div style={{fontSize:10,color:'#555'}}>{fmtDateShort(m.date)}</div></td>
+                      <td><span style={{color:'#FFC72C',fontWeight:700}}>{m.casesTotal}</span></td>
+                      <td>{m.makoTotal}</td>
+                      <td>
+                        <div style={{display:'flex',alignItems:'center',gap:6}}>
+                          <div className="prog" style={{width:50,height:6,display:'inline-block'}}>
+                            <div className="prog-fill" style={{width:`${m.makoUtil||0}%`}}/>
+                          </div>
+                          <span style={{fontSize:12,color:Number(m.makoUtil)>=70?'#22c55e':Number(m.makoUtil)>=40?'#f97316':'#ef4444'}}>{m.makoUtil}%</span>
+                        </div>
+                      </td>
+                      <td>{m.newContacts}</td>
+                      <td>{m.surgeonCalls}</td>
+                      <td>{m.newAccounts}</td>
+                      <td>
+                        <button onClick={()=>delEntry(m.id)} className="btn-r" style={{fontSize:11,padding:'3px 8px'}}>✕</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="card" style={{textAlign:'center',padding:48,color:'#555'}}>
+              <div style={{fontSize:32,marginBottom:12}}>📋</div>
+              <div style={{fontSize:15,marginBottom:8}}>No weekly data yet.</div>
+              <div style={{fontSize:13,marginBottom:20}}>Log your first week to start tracking trends.</div>
+              <button className="btn-y" onClick={()=>setShowEntry(true)}>Log This Week</button>
+            </div>
+          )}
+
+          {showEntry && (
+            <Modal title="Log Weekly Performance" onClose={()=>setShowEntry(false)}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                <div style={{gridColumn:'span 2'}}>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Week Label *</label>
+                  <input className="inp" value={entry.weekLabel} onChange={e(('weekLabel'))} placeholder="e.g. Week of Mar 10, or Week 3"/>
+                </div>
+                {[
+                  ['casesTotal','Total Cases Covered','How many total OR cases this week?'],
+                  ['makoTotal','Mako Cases','How many were Mako-assisted?'],
+                  ['makoUtil','Mako Utilization %','% of eligible cases done with Mako (0–100)'],
+                  ['newContacts','New CRM Contacts','How many new contacts logged?'],
+                  ['surgeonCalls','Surgeon / Office Calls','Office visits or cold calls made'],
+                  ['newAccounts','New Accounts Opened','New hospital or practice relationships started'],
+                ].map(([k,label,ph])=>(
+                  <div key={k}>
+                    <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>{label}</label>
+                    <input className="inp" type="number" min="0" value={entry[k]} onChange={e(k)} placeholder={ph}/>
+                  </div>
+                ))}
+                <div style={{gridColumn:'span 2'}}>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Notes / Highlights</label>
+                  <textarea className="inp" rows={3} value={entry.notes} onChange={e('notes')} placeholder="Key wins, challenges, anything notable this week..."/>
+                </div>
+              </div>
+              <div style={{display:'flex',gap:10,marginTop:16}}>
+                <button className="btn-y" onClick={saveEntry}>Save Entry</button>
+                <button className="btn-o" onClick={()=>setShowEntry(false)}>Cancel</button>
+              </div>
+            </Modal>
+          )}
+        </div>
+      )}
+
+      {/* ── MY TARGETS ── */}
+      {sub==='targets' && (
+        <div className="fade-in">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:10}}>
+            <div style={{color:'#888',fontSize:13}}>Enter your targets manually. Tracks your progress vs. goals. <span style={{color:'#FFC72C'}}>Your data stays local — never sent anywhere.</span></div>
+            <button className="btn-y" onClick={()=>setShowTargets(true)}>
+              {myTargets?'Update Targets':'Set My Targets'}
+            </button>
+          </div>
+
+          {myTargets && (Number(myTargets.qCasesTarget)>0||Number(myTargets.qContactsTarget)>0||Number(myTargets.qMakoTarget)>0) ? (
+            <div>
+              {/* Aggregate actuals */}
+              {(()=>{
+                const actCases=myMetrics.reduce((a,m)=>a+Number(m.casesTotal||0),0);
+                const actMako=myMetrics.reduce((a,m)=>a+Number(m.makoTotal||0),0);
+                const actContacts=myMetrics.reduce((a,m)=>a+Number(m.newContacts||0),0);
+                const targets=[
+                  {label:'Cases Covered',actual:actCases,target:myTargets.qCasesTarget,icon:'🔪',color:'#FFC72C'},
+                  {label:'Mako Cases',actual:actMako,target:myTargets.qMakoTarget,icon:'🤖',color:'#3b82f6'},
+                  {label:'New Contacts',actual:actContacts,target:myTargets.qContactsTarget,icon:'👥',color:'#22c55e'},
+                ];
+                return (
+                  <div>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:16,marginBottom:24}}>
+                      {targets.map(tgt=>{
+                        const pct=pctOf(tgt.actual,tgt.target);
+                        return(
+                          <div key={tgt.label} className="card" style={{borderLeft:`4px solid ${tgt.color}`}}>
+                            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                              <div style={{fontWeight:700,fontSize:14}}>{tgt.icon} {tgt.label}</div>
+                              <span style={{fontSize:20,fontWeight:800,color:tgt.color}}>{pct}%</span>
+                            </div>
+                            <ProgressBar pct={pct}/>
+                            <div style={{display:'flex',justifyContent:'space-between',marginTop:8,fontSize:13,color:'#aaa'}}>
+                              <span>Actual: <strong style={{color:'#fff'}}>{tgt.actual}</strong></span>
+                              <span>Target: <strong style={{color:tgt.color}}>{tgt.target}</strong></span>
+                              <span>Gap: <strong style={{color:pct>=100?'#22c55e':'#f97316'}}>{Math.max(0,Number(tgt.target)-tgt.actual)}</strong></span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="card">
+                      <div style={{color:'#FFC72C',fontWeight:700,fontSize:15,marginBottom:14}}>📋 Target Summary</div>
+                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16'}}>
+                        {myTargets.annualQuota&&<div style={{marginBottom:10}}><div style={{fontSize:12,color:'#888'}}>Annual Quota</div><div style={{fontSize:18,fontWeight:700,color:'#FFC72C'}}>{myTargets.annualQuota}</div></div>}
+                        {myTargets.qRevenueTarget&&<div style={{marginBottom:10}}><div style={{fontSize:12,color:'#888'}}>Quarterly Revenue Target</div><div style={{fontSize:18,fontWeight:700,color:'#FFC72C'}}>{myTargets.qRevenueTarget}</div></div>}
+                      </div>
+                      {myTargets.notes&&<div style={{marginTop:10,padding:10,background:'#2a2a2a',borderRadius:8,fontSize:13,color:'#aaa'}}>{myTargets.notes}</div>}
+                      <div style={{marginTop:14,padding:12,background:'#1a1a00',borderRadius:8,fontSize:12,color:'#555'}}>
+                        🔒 Your targets are stored locally in your browser only. They are never uploaded or shared.
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+            <div className="card" style={{textAlign:'center',padding:48,color:'#555'}}>
+              <div style={{fontSize:32,marginBottom:12}}>🎯</div>
+              <div style={{fontSize:15,marginBottom:8}}>No targets set yet.</div>
+              <div style={{fontSize:13,marginBottom:20}}>Enter your quarterly targets to track progress. All data stays in your browser.</div>
+              <button className="btn-y" onClick={()=>setShowTargets(true)}>Set My Targets</button>
+            </div>
+          )}
+
+          {showTargets && (
+            <Modal title="Set My Targets" onClose={()=>setShowTargets(false)}>
+              <div style={{fontSize:12,color:'#888',marginBottom:14,padding:10,background:'#1a1a00',borderRadius:8}}>
+                🔒 These numbers are stored locally in your browser only. They are never sent to any server.
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                {[
+                  ['qCasesTarget','Quarterly Cases Target','How many cases to cover this quarter?'],
+                  ['qMakoTarget','Quarterly Mako Cases Target','Target Mako cases for the quarter'],
+                  ['qContactsTarget','Quarterly New Contacts Target','New contacts to add to CRM'],
+                ].map(([k,label,ph])=>(
+                  <div key={k}>
+                    <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>{label}</label>
+                    <input className="inp" type="number" min="0" value={targetForm[k]} onChange={t(k)} placeholder={ph}/>
+                  </div>
+                ))}
+                <div>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Annual Quota (enter how you like — $ or units)</label>
+                  <input className="inp" value={targetForm.annualQuota} onChange={t('annualQuota')} placeholder="e.g. $500,000 or 120 cases"/>
+                </div>
+                <div>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Quarterly Revenue Target</label>
+                  <input className="inp" value={targetForm.qRevenueTarget} onChange={t('qRevenueTarget')} placeholder="e.g. $125,000"/>
+                </div>
+                <div>
+                  <label style={{fontSize:12,color:'#888',display:'block',marginBottom:4}}>Notes</label>
+                  <textarea className="inp" rows={2} value={targetForm.notes} onChange={t('notes')} placeholder="Any context about your targets..."/>
+                </div>
+                <div style={{display:'flex',gap:10}}>
+                  <button className="btn-y" onClick={saveTargets}>Save Targets</button>
+                  <button className="btn-o" onClick={()=>setShowTargets(false)}>Cancel</button>
+                </div>
+              </div>
+            </Modal>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── MAIN APP ───────────────────────────────────────────────────────────────
 function App() {
   const [tab,setTab]=useState('dashboard');
@@ -1215,6 +1584,8 @@ function App() {
   const [credentials,setCredentials]=useLS('cj_credentials',DATA.defaultCredentials);
   const [trainingProgress,setTrainingProgress]=useLS('cj_training',{});
   const [teamMembers,setTeamMembers]=useLS('cj_team',[]);
+  const [myMetrics,setMyMetrics]=useLS('cj_myMetrics',[]);
+  const [myTargets,setMyTargets]=useLS('cj_myTargets',null);
 
   const renderTab=()=>{
     switch(tab){
@@ -1222,6 +1593,7 @@ function App() {
       case 'training': return <Training trainingProgress={trainingProgress} setTrainingProgress={setTrainingProgress}/>;
       case 'intel': return <IntelReport/>;
       case 'roadmap': return <Roadmap user={user} trainingProgress={trainingProgress}/>;
+      case 'metrics': return <Metrics myMetrics={myMetrics} setMyMetrics={setMyMetrics} myTargets={myTargets} setMyTargets={setMyTargets}/>;
       case 'creds': return <Credentialing credentials={credentials} setCredentials={setCredentials}/>;
       case 'crm': return <CRM contacts={contacts} setContacts={setContacts}/>;
       case 'team': return <TeamHub teamMembers={teamMembers} setTeamMembers={setTeamMembers}/>;
