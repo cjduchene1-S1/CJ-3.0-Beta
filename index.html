@@ -4252,45 +4252,117 @@ Generated via CJ 4.0 Territory OS`;
   );
 }
 
-// ── CHATBOT ───────────────────────────────────────────────────────────────────
+// ── CHATBOT (AI-Powered via Anthropic API) ────────────────────────────────────
 function Chatbot() {
   const [history, setHistory] = useLS('cj_chat4',[{role:'bot',msg:'Welcome to CJ 4.0. Ask me anything about your role — Mako workflow, clinical knowledge, OR etiquette, competitor positioning, territory strategy, or case preparation. What do you need?'}]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const bottomRef = useRef();
   useEffect(()=>bottomRef.current?.scrollIntoView({behavior:'smooth'}),[history]);
-
-  const respond = q => {
-    const ql = q.toLowerCase();
-    const match = DATA.chatKnowledge.find(k=>k.keys.some(key=>ql.includes(key)));
-    return match ? match.response : `Good question. For "${q}" — I recommend checking the Training Hub modules or asking Cody or Chanel directly. I can help with: Mako workflow, TKA/THA/PKA clinical details, OR etiquette, competitor positioning (ROSA, CORI), credentialing, territory strategy, inventory management, or case preparation. What topic would you like to explore?`;
+ 
+  const sendToAPI = async (question, chatHistory) => {
+    const systemPrompt = `You are CJ Assistant — an expert AI embedded in the CJ 4.0 Territory OS for CJ DuChene, an Associate Sales Representative at Stryker Joint Replacement covering North Texas.
+ 
+Your role is to answer questions about:
+- Mako SmartRobotics: CT-based 3D planning, AccuStop haptic technology, TKA/THA/PKA workflow, registration steps, clinical evidence (Khlopas et al. up to 3x fewer outliers; Kayani et al. JBJS 2018 improved PROs; PKA survivorship >98% at 2 years; OR time normalizes ~7-20 cases)
+- Stryker products: Triathlon TKA (CR and PS), Accolade II THA, Trident II, Secur-Fit Max, Restoris MCK PKA, Tritanium porous technology
+- Mako cleared indications: PKA (2006), TKA (2015), THA (2017) — only platform with all 3
+- Clinical knowledge: hip/knee anatomy, OA Kellgren-Lawrence grading, THA approaches (posterior, DAA, anterolateral), TKA gap balancing, soft tissue releases, fixation (cementless vs cemented), PMMA cement technique, osseointegration, revision surgery
+- OR etiquette: sterile field rules (12-inch rule, drop technique, immediate contamination reporting), SPD relationships, scrub tech/circulator communication, pre/during/post case protocol
+- Competitor positioning: ROSA (Zimmer Biomet — TKA+THA, no PKA, image-free option), CORI (Smith & Nephew — handheld, no CT, TKA only), VELYS (DePuy/J&J — TKA-focused, CT-optional, J&J sales force threat)
+- North Texas territory: BSW (largest nonprofit in TX), HCA Healthcare, Methodist, UT Southwestern (academic), Texas Health Resources, Medical City Healthcare
+- Account tiering: Tier 1 (weekly presence, high Mako), Tier 2 (bi-weekly, growth), Tier 3 (monthly, development)
+- Sales techniques: consultative selling (Research→Open→Discover→Present→Handle→Close→Follow Through), objection handling (Acknowledge→Clarify→Respond→Confirm)
+- Credentialing: Reptrax, Vendormate (symplr), Intellicentrics — must complete before any OR entry
+- Inventory: loaner trays (book 3-5 days out), consignment audits (monthly), FIFO rotation, par levels, SPD coordination
+- Manager reporting to Cody Crocker (sales manager) and Chanel Derr
+- CJ is currently Day 24 in his role, Month 1 of 6
+ 
+Be direct, concise, expert-level. Give actionable answers. Keep responses under 300 words unless detail is truly critical. Prefer clear prose. Never fabricate clinical data.`;
+ 
+    const messages = [];
+    for(let i = 1; i < chatHistory.length; i++) {
+      const m = chatHistory[i];
+      if(m.role === 'user' || m.role === 'bot') {
+        messages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.msg });
+      }
+    }
+    messages.push({ role: 'user', content: question });
+ 
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: messages,
+      })
+    });
+ 
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err?.error?.message || 'API error ' + response.status);
+    }
+ 
+    const data = await response.json();
+    return data.content?.[0]?.text || 'No response received.';
   };
-
-  const send = () => {
-    if(!input.trim()) return;
-    const q = input.trim(); setInput('');
-    setHistory(p=>[...p,{role:'user',msg:q},{role:'bot',msg:respond(q)}]);
+ 
+  const send = async () => {
+    if(!input.trim() || loading) return;
+    const q = input.trim();
+    setInput('');
+    const newHistory = [...history, {role:'user', msg:q}];
+    setHistory(newHistory);
+    setLoading(true);
+    try {
+      const reply = await sendToAPI(q, newHistory);
+      setHistory(p => [...p, {role:'bot', msg:reply}]);
+    } catch(err) {
+      setHistory(p => [...p, {role:'bot', msg:'Error connecting to AI: ' + err.message + '. Please check your connection and try again.'}]);
+    } finally {
+      setLoading(false);
+    }
   };
-
+ 
   const chips = ['Tell me about Mako','AccuStop technology','How do I handle objections?','What credentials do I need?','OR etiquette tips','First 90 days strategy','Competitor positioning','Dallas territory intel'];
-
+ 
   return (
     <div className="fade-up" style={{padding:24,maxWidth:820,margin:'0 auto'}}>
       <SectionTitle title="CJ Assistant" icon="chat" sub="Ask anything about your role, products, territory, or clinical knowledge"/>
       <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,display:'flex',flexDirection:'column',height:'calc(100vh - 280px)',minHeight:400}}>
         <div style={{flex:1,overflowY:'auto',padding:20,display:'flex',flexDirection:'column',gap:12}}>
           {history.map((m,i)=>(
-            <div key={i} className={m.role==='user'?'chat-user':'chat-bot'} style={{alignSelf:m.role==='user'?'flex-end':'flex-start'}}>{m.msg}</div>
+            <div key={i} className={m.role==='user'?'chat-user':'chat-bot'} style={{alignSelf:m.role==='user'?'flex-end':'flex-start',whiteSpace:'pre-wrap'}}>{m.msg}</div>
           ))}
+          {loading && (
+            <div className="chat-bot" style={{alignSelf:'flex-start',display:'flex',alignItems:'center',gap:8,color:'var(--text2)'}}>
+              <div style={{display:'flex',gap:4,alignItems:'center'}}>
+                {[0,1,2].map(i=>(
+                  <div key={i} style={{width:6,height:6,borderRadius:'50%',background:'var(--gold)',animation:'pulse 1.2s ease-in-out infinite',animationDelay:i*0.2+'s'}}/>
+                ))}
+              </div>
+              Thinking...
+            </div>
+          )}
           <div ref={bottomRef}/>
         </div>
         <div style={{padding:'12px 16px',borderTop:'1px solid var(--border)'}}>
           <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:10}}>
-            {chips.map(c=><button key={c} className="chip" onClick={()=>{setInput(c);}}>{c}</button>)}
+            {chips.map(c=><button key={c} className="chip" onClick={()=>{if(!loading) setInput(c);}}>{c}</button>)}
           </div>
           <div style={{display:'flex',gap:10}}>
-            <input className="inp" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Ask anything..."/>
-            <button className="btn btn-gold" onClick={send}><Icon n='send' s={14}/></button>
-            <button className="btn btn-ghost" onClick={()=>setHistory([{role:'bot',msg:'Chat cleared. What would you like to know?'}])}>Clear</button>
+            <input className="inp" value={input} onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>e.key==='Enter'&&!loading&&send()}
+              placeholder={loading?'Waiting for response...':'Ask anything...'}
+              disabled={loading}
+              style={{opacity:loading?0.7:1}}
+            />
+            <button className="btn btn-gold" onClick={send} disabled={loading} style={{opacity:loading?0.6:1,cursor:loading?'not-allowed':'pointer'}}>
+              <Icon n='send' s={14}/>
+            </button>
+            <button className="btn btn-ghost" onClick={()=>{if(!loading) setHistory([{role:'bot',msg:'Chat cleared. What would you like to know?'}])}} disabled={loading}>Clear</button>
           </div>
           <div style={{fontSize:10,color:'var(--text3)',marginTop:8,textAlign:'center'}}>General guidance based on publicly available knowledge. Verify specifics with Stryker training materials.</div>
         </div>
