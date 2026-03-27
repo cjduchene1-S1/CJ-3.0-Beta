@@ -4324,6 +4324,52 @@ Be direct, concise, expert-level. Give actionable answers. Keep responses under 
     } finally {
       setLoading(false);
     }
+  };
+ 
+  const chips = ['Tell me about Mako','AccuStop technology','How do I handle objections?','What credentials do I need?','OR etiquette tips','First 90 days strategy','Competitor positioning','Dallas territory intel'];
+ 
+  return (
+    <div className="fade-up" style={{padding:24,maxWidth:820,margin:'0 auto'}}>
+      <SectionTitle title="CJ Assistant" icon="chat" sub="Ask anything about your role, products, territory, or clinical knowledge"/>
+      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,display:'flex',flexDirection:'column',height:'calc(100vh - 280px)',minHeight:400}}>
+        <div style={{flex:1,overflowY:'auto',padding:20,display:'flex',flexDirection:'column',gap:12}}>
+          {history.map((m,i)=>(
+            <div key={i} className={m.role==='user'?'chat-user':'chat-bot'} style={{alignSelf:m.role==='user'?'flex-end':'flex-start',whiteSpace:'pre-wrap'}}>{m.msg}</div>
+          ))}
+          {loading && (
+            <div className="chat-bot" style={{alignSelf:'flex-start',display:'flex',alignItems:'center',gap:8,color:'var(--text2)'}}>
+              <div style={{display:'flex',gap:4,alignItems:'center'}}>
+                {[0,1,2].map(i=>(
+                  <div key={i} style={{width:6,height:6,borderRadius:'50%',background:'var(--gold)',animation:'pulse 1.2s ease-in-out infinite',animationDelay:i*0.2+'s'}}/>
+                ))}
+              </div>
+              Thinking...
+            </div>
+          )}
+          <div ref={bottomRef}/>
+        </div>
+        <div style={{padding:'12px 16px',borderTop:'1px solid var(--border)'}}>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:10}}>
+            {chips.map(c=><button key={c} className="chip" onClick={()=>{if(!loading) setInput(c);}}>{c}</button>)}
+          </div>
+          <div style={{display:'flex',gap:10}}>
+            <input className="inp" value={input} onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>e.key==='Enter'&&!loading&&send()}
+              placeholder={loading?'Waiting for response...':'Ask anything...'}
+              disabled={loading}
+              style={{opacity:loading?0.7:1}}
+            />
+            <button className="btn btn-gold" onClick={send} disabled={loading} style={{opacity:loading?0.6:1,cursor:loading?'not-allowed':'pointer'}}>
+              <Icon n='send' s={14}/>
+            </button>
+            <button className="btn btn-ghost" onClick={()=>{if(!loading) setHistory([{role:'bot',msg:'Chat cleared. What would you like to know?'}])}} disabled={loading}>Clear</button>
+          </div>
+          <div style={{fontSize:10,color:'var(--text3)',marginTop:8,textAlign:'center'}}>General guidance based on publicly available knowledge. Verify specifics with Stryker training materials.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
  
 // ── ROADMAP ───────────────────────────────────────────────────────────────────
 function Roadmap({user, trainingProgress}) {
