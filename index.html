@@ -3719,300 +3719,216 @@ function Inventory({inventory, setInventory}) {
 }
 
 // ── TRAINING ──────────────────────────────────────────────────────────────────
-function Training({trainingProgress,setTrainingProgress}) {
-  const [selected,setSelected]=useState(null);
-  const [quiz,setQuiz]=useState(null);
-  const [qIdx,setQIdx]=useState(0);
-  const [ans,setAns]=useState(null);
-  const [score,setScore]=useState(0);
-  const [quizDone,setQuizDone]=useState(false);
-  const [view,setView]=useState('modules'); // 'modules','lesson','quiz'
-  const [filterCat,setFilterCat]=useState('All');
+function Training({trainingProgress, setTrainingProgress}) {
+  const [active, setActive] = useState(null);
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizState, setQuizState] = useState({});
+  const [quizIdx, setQuizIdx] = useState(0);
+  const [filter, setFilter] = useState('All');
 
-  const prog = mod => trainingProgress[mod.id] || {};
-  const pct = () => DATA.trainingModules.filter(m=>trainingProgress[m.id]?.completed).length / DATA.trainingModules.length * 100;
+  const cats = ['All',...new Set(DATA.trainingModules.map(m=>m.cat))];
+  const filtered = DATA.trainingModules.filter(m=>filter==='All'||m.cat===filter);
+  const completed = Object.values(trainingProgress).filter(v=>v?.completed).length;
+  const pct = Math.round(completed/DATA.trainingModules.length*100);
 
-  const startQuiz = mod => {
-    setQuiz(mod);
-    setQIdx(0);
-    setAns(null);
-    setScore(0);
-    setQuizDone(false);
-    setView('quiz');
+  const catColor = {Clinical:'var(--teal)',Technology:'var(--gold)',Professional:'var(--purple)',Sales:'var(--green)',Operations:'var(--orange)',Strategy:'var(--red)'};
+
+  const openModule = m => { setActive(m); setQuizMode(false); setQuizState({}); setQuizIdx(0); };
+  const startQuiz = () => { setQuizMode(true); setQuizState({}); setQuizIdx(0); };
+  const backToLesson = () => { setQuizMode(false); setQuizState({}); setQuizIdx(0); };
+  const backToModules = () => { setActive(null); setQuizMode(false); };
+
+  const answer = (qi, choice) => {
+    if(quizState[qi]!==undefined) return;
+    setQuizState(p=>({...p,[qi]:choice}));
   };
 
-  const handleAns = (mod, idx) => {
-    if(ans!==null) return;
-    setAns(idx);
-    if(idx === quiz.quiz[qIdx].correct) setScore(s=>s+1);
-    setTimeout(()=>{
-      if(qIdx+1 >= quiz.quiz.length) {
-        setQuizDone(true);
-        const pctScore = (score+(idx===quiz.quiz[qIdx].correct?1:0)) / quiz.quiz.length * 100;
-        if(pctScore>=70) {
-          setTrainingProgress(prev=>({...prev,[quiz.id]:{...prev[quiz.id],completed:true,score:pctScore,date:new Date().toISOString()}}));
-        }
-      } else {
-        setQIdx(q=>q+1);
-        setAns(null);
-      }
-    }, 1400);
+  const nextQ = () => {
+    if(quizIdx < active.quiz.length - 1) {
+      setQuizIdx(p=>p+1);
+    } else {
+      // quiz done - save progress
+      const correctCount = Object.entries(quizState).filter(([i,c])=>active.quiz[Number(i)]?.correct===c).length;
+      const finalCorrect = quizState[quizIdx] === active.quiz[quizIdx].correct ? correctCount + 1 : correctCount;
+      setTrainingProgress(p=>({...p,[active.id]:{completed:true,date:new Date().toISOString(),score:finalCorrect,total:active.quiz.length}}));
+      setQuizIdx(active.quiz.length); // signal done
+    }
   };
 
-  const finalScore = () => score / quiz.quiz.length * 100;
-
-  // ── CAT COLOR MAP ──
-  const catColor = {
-    Clinical:'#00D4FF', Technology:'#F5A623', Professional:'#00E676',
-    Sales:'#BF5AF2', Operations:'#FF9500', Strategy:'#FF5252'
-  };
-
-  // ── QUIZ VIEW ──
-  if(view==='quiz' && quiz) {
-    const q = quiz.quiz[qIdx];
-    return (
-      <div className="fade-in" style={{padding:24,maxWidth:700,margin:'0 auto'}}>
-        <button className="btn-o" onClick={()=>setView('lesson')} style={{marginBottom:20}}>← Back to Lesson</button>
-        {!quizDone ? (
-          <div className="card">
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6,flexWrap:'wrap',gap:8}}>
-              <div style={{color:'var(--gold)',fontWeight:700,fontSize:15}}>{quiz.title} — Knowledge Check</div>
-              <div style={{fontSize:13,color:'#888'}}>Q{qIdx+1} / {quiz.quiz.length}</div>
-            </div>
-            <ProgressBar pct={(qIdx/quiz.quiz.length)*100}/>
-            <div style={{fontSize:16,fontWeight:600,margin:'20px 0 16px',lineHeight:1.6,color:'#eee'}}>{q.q}</div>
-            <div style={{display:'flex',flexDirection:'column',gap:10}}>
-              {q.opts.map((o,i)=>(
-                <button key={i} className={`quiz-opt ${ans!==null?(i===q.correct?'correct':ans===i?'wrong':''):''}`}
-                  onClick={()=>handleAns(quiz,i)}>{o}</button>
-              ))}
-            </div>
-            {ans!==null && (
-              <div style={{marginTop:16,padding:14,background:'rgba(0,230,118,0.06)',border:'1px solid rgba(0,230,118,0.2)',borderRadius:8,fontSize:13,color:'#aaa',lineHeight:1.6}}>
-                <span style={{color:'var(--teal)',fontWeight:700}}>Explanation: </span>{q.exp}
+  // ── MODULE GRID ──
+  if(!active) return (
+    <div className="fade-up" style={{padding:24,maxWidth:1280,margin:'0 auto'}}>
+      <SectionTitle title="Training Hub" icon="training" sub={`${completed} of ${DATA.trainingModules.length} modules complete`}/>
+      <div style={{marginBottom:20}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+          <span style={{fontSize:13,color:'var(--text2)'}}>Overall Progress</span>
+          <span style={{fontWeight:700,color:'var(--gold)'}}>{pct}%</span>
+        </div>
+        <div className="prog" style={{height:8}}><div className="prog-fill" style={{width:`${pct}%`}}/></div>
+      </div>
+      <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
+        {cats.map(c=><Pill key={c} active={filter===c} onClick={()=>setFilter(c)}>{c}</Pill>)}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:16}}>
+        {filtered.map(m=>{
+          const done = trainingProgress[m.id]?.completed;
+          const cc = catColor[m.cat]||'var(--text2)';
+          return (
+            <div key={m.id} className="glass" style={{padding:20,cursor:'pointer',transition:'all .2s',border:done?'1px solid rgba(0,230,118,.25)':'1px solid var(--border)'}} onClick={()=>openModule(m)}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
+                <span className="badge" style={{background:`${cc}18`,color:cc,border:`1px solid ${cc}33`,fontSize:10}}>{m.cat}</span>
+                {done && <span className="badge badge-green" style={{fontSize:10}}>✓ Done</span>}
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="card" style={{textAlign:'center'}}>
-            <div style={{fontSize:52,marginBottom:12}}>{finalScore()>=70?'🏆':'📚'}</div>
-            <div style={{fontSize:28,fontWeight:800,color:finalScore()>=70?'#22c55e':'#f97316',marginBottom:8}}>
-              {Math.round(finalScore())}%
+              <div style={{fontWeight:700,fontSize:15,marginBottom:6}}>{m.title}</div>
+              <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.5,marginBottom:14}}>{m.desc}</div>
+              <div style={{display:'flex',gap:12}}>
+                <span style={{fontSize:11,color:'var(--text2)'}}><Icon n='clock' s={11}/> {m.dur}</span>
+                <span style={{fontSize:11,color:'var(--text2)'}}><Icon n='clipboard' s={11}/> {m.quiz.length} questions</span>
+              </div>
+              {done && <div style={{marginTop:10,fontSize:12,color:'var(--green)'}}>Score: {trainingProgress[m.id].score}/{trainingProgress[m.id].total||m.quiz.length}</div>}
             </div>
-            <div style={{fontSize:16,color:'#ddd',marginBottom:8}}>
-              {finalScore()>=70?'Module Passed — Outstanding work.':'Keep studying — review the lesson and retry.'}
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  // ── QUIZ MODE ──
+  if(quizMode) {
+    const isDone = quizIdx >= active.quiz.length;
+    const q = !isDone ? active.quiz[quizIdx] : null;
+    return (
+      <div className="fade-up" style={{padding:24,maxWidth:760,margin:'0 auto'}}>
+        <button className="btn btn-ghost" onClick={backToLesson} style={{marginBottom:20}}>
+          <Icon n='chev_right' s={14} c='var(--text2)' stroke={2}/> Back to Lesson
+        </button>
+        <div style={{fontWeight:800,fontSize:20,marginBottom:4}}>{active.title}</div>
+        <div style={{fontSize:13,color:'var(--text2)',marginBottom:20}}>Knowledge Check · {active.quiz.length} questions</div>
+        <div className="glass" style={{padding:24}}>
+          {!isDone ? (
+            <div>
+              <div style={{fontSize:11,color:'var(--text2)',marginBottom:8,textTransform:'uppercase',letterSpacing:'.7px'}}>Question {quizIdx+1} of {active.quiz.length}</div>
+              <div className="prog" style={{marginBottom:16}}><div className="prog-fill" style={{width:`${(quizIdx/active.quiz.length)*100}%`,background:'var(--teal)'}}/></div>
+              <div style={{fontWeight:600,fontSize:15,marginBottom:16,lineHeight:1.6,color:'var(--text)'}}>{q.q}</div>
+              {q.opts.map((o,oi)=>{
+                const sel = quizState[quizIdx];
+                const isCorrect = oi===q.correct;
+                const selected = sel===oi;
+                const revealed = sel!==undefined;
+                return (
+                  <button key={oi} onClick={()=>answer(quizIdx,oi)} style={{display:'block',width:'100%',textAlign:'left',padding:'12px 16px',borderRadius:10,border:`1px solid ${revealed?(isCorrect?'var(--green)':selected?'var(--red)':'var(--border)'):'var(--border)'}`,background:revealed?(isCorrect?'rgba(0,230,118,.1)':selected?'rgba(255,82,82,.1)':'var(--surface)'):'var(--surface)',color:'var(--text)',marginBottom:8,cursor:revealed?'default':'pointer',transition:'all .2s',fontSize:13}}>
+                    {o}
+                  </button>
+                );
+              })}
+              {quizState[quizIdx]!==undefined && (
+                <div style={{marginTop:12,padding:'12px 14px',background:'rgba(0,212,255,.07)',border:'1px solid rgba(0,212,255,.2)',borderRadius:10}}>
+                  <div style={{fontSize:12,color:quizState[quizIdx]===q.correct?'var(--green)':'var(--red)',fontWeight:700,marginBottom:4}}>
+                    {quizState[quizIdx]===q.correct ? 'Correct!' : 'Incorrect'}
+                  </div>
+                  <div style={{fontSize:13,color:'var(--text)',lineHeight:1.6}}>{q.exp}</div>
+                  <button className="btn btn-gold" style={{marginTop:12}} onClick={nextQ}>
+                    {quizIdx < active.quiz.length-1 ? 'Next Question' : 'Finish Quiz'}
+                  </button>
+                </div>
+              )}
             </div>
-            <div style={{color:'#888',fontSize:13,marginBottom:24}}>{score} of {quiz.quiz.length} correct</div>
-            <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-              <button className="btn-y" onClick={()=>{setView('lesson');setSelected(quiz)}}>Back to Lesson</button>
-              <button className="btn-o" onClick={()=>startQuiz(quiz)}>Retry Quiz</button>
-              <button style={{background:'rgba(255,255,255,0.07)',border:'1px solid #333',borderRadius:8,padding:'10px 18px',color:'#aaa',cursor:'pointer',fontSize:14}} onClick={()=>setView('modules')}>All Modules</button>
+          ) : (
+            <div style={{textAlign:'center',padding:20}}>
+              <div style={{fontSize:48,marginBottom:12}}>🏆</div>
+              <div style={{fontWeight:800,fontSize:22,color:'var(--green)',marginBottom:8}}>Module Complete!</div>
+              <div style={{fontSize:14,color:'var(--text2)',marginBottom:20}}>
+                Score: {trainingProgress[active.id]?.score ?? 0} / {active.quiz.length}
+              </div>
+              <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+                <button className="btn btn-ghost" onClick={backToLesson}>Back to Lesson</button>
+                <button className="btn btn-gold" onClick={startQuiz}>Retry Quiz</button>
+                <button className="btn btn-ghost" onClick={backToModules}>All Modules</button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
 
   // ── LESSON VIEW ──
-  if(view==='lesson' && selected) {
-    const p = prog(selected);
-    const cc = catColor[selected.cat] || '#F5A623';
-    return (
-      <div className="fade-in" style={{padding:24,maxWidth:860,margin:'0 auto'}}>
-        {/* Header nav */}
-        <button className="btn-o" onClick={()=>setView('modules')} style={{marginBottom:20}}>← Back to Modules</button>
-
-        {/* Module header card */}
-        <div className="card" style={{marginBottom:24,borderTop:`3px solid ${cc}`}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:cc,textTransform:'uppercase',letterSpacing:1,marginBottom:6}}>{selected.cat}</div>
-              <div style={{fontSize:24,fontWeight:800,marginBottom:4,color:'#eee'}}>{selected.title}</div>
-              <div style={{color:'#888',fontSize:13}}>{selected.dur} · {selected.quiz.length} questions</div>
-            </div>
-            {p.completed && <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}>
-              <Badge type="g" text="✓ Completed"/>
-              <div style={{color:'#22c55e',fontSize:12}}>Score: {Math.round(p.score)}%</div>
-            </div>}
-          </div>
-          <p style={{marginTop:14,color:'#aaa',fontSize:14,lineHeight:1.7}}>{selected.desc}</p>
-        </div>
-
-        {/* Lesson sections */}
-        {selected.sections && selected.sections.map((sec,si)=>(
-          <div key={si} style={{marginBottom:28}}>
-            {/* Section heading */}
-            {sec.heading && (
-              <div style={{
-                fontSize:16, fontWeight:800, color:cc,
-                paddingBottom:10, marginBottom:16,
-                borderBottom:`1px solid rgba(255,255,255,0.08)`,
-                letterSpacing:0.3
-              }}>{sec.heading}</div>
-            )}
-
-            {/* Body text — render newlines and bullet points */}
-            {sec.body && (
-              <div style={{fontSize:14,lineHeight:1.85,color:'#ccc',whiteSpace:'pre-line',marginBottom:sec.svg||sec.videos?16:0}}>
-                {sec.body}
-              </div>
-            )}
-
-            {/* SVG diagram */}
-            {sec.svg && (
-              <div style={{
-                margin:'20px 0',
-                padding:4,
-                background:'rgba(255,255,255,0.02)',
-                border:'1px solid rgba(255,255,255,0.07)',
-                borderRadius:14,
-                overflow:'hidden'
-              }}
-                dangerouslySetInnerHTML={{__html: sec.svg}}
-              />
-            )}
-
-            {/* Video links */}
-            {sec.videos && sec.videos.length>0 && (
-              <div style={{marginTop:12}}>
-                <div style={{color:'var(--gold)',fontWeight:700,fontSize:13,marginBottom:10}}>🎬 Watch & Learn</div>
-                <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                  {sec.videos.map((v,vi)=>(
-                    <a key={vi} href={v.url} target="_blank" rel="noopener noreferrer"
-                      style={{
-                        display:'flex',alignItems:'center',gap:12,
-                        padding:'12px 16px',
-                        background:'rgba(0,212,255,0.05)',
-                        border:'1px solid rgba(0,212,255,0.15)',
-                        borderRadius:10,
-                        textDecoration:'none',color:'#ddd',fontSize:13,
-                        transition:'background 0.2s'
-                      }}
-                      onMouseEnter={e=>e.currentTarget.style.background='rgba(0,212,255,0.1)'}
-                      onMouseLeave={e=>e.currentTarget.style.background='rgba(0,212,255,0.05)'}
-                    >
-                      <span style={{fontSize:18,flexShrink:0}}>▶</span>
-                      <span style={{flex:1}}>{v.title}</span>
-                      <span style={{fontSize:11,color:'var(--teal)',flexShrink:0}}>Open →</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-
-        {/* Quiz launch card */}
-        <div style={{
-          marginTop:32,
-          padding:24,
-          background:'rgba(245,166,35,0.06)',
-          border:'2px solid rgba(245,166,35,0.25)',
-          borderRadius:14,
-          display:'flex',
-          justifyContent:'space-between',
-          alignItems:'center',
-          flexWrap:'wrap',
-          gap:16
-        }}>
-          <div>
-            <div style={{fontWeight:800,fontSize:17,color:'var(--gold)',marginBottom:4}}>Knowledge Check</div>
-            <div style={{color:'#888',fontSize:13}}>{selected.quiz.length} questions · 70% to pass</div>
-            {p.completed && <div style={{color:'#22c55e',fontSize:12,marginTop:4}}>Last score: {Math.round(p.score)}% · {fmtDateShort(p.date)}</div>}
-          </div>
-          <div style={{display:'flex',gap:10}}>
-            <button className="btn-y" onClick={()=>startQuiz(selected)}>
-              {p.completed ? 'Retake Quiz' : 'Start Quiz →'}
-            </button>
-          </div>
-        </div>
-
-        {/* Disclaimer */}
-        <div style={{marginTop:28,padding:14,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,fontSize:12,color:'#666',lineHeight:1.6}}>
-          ⚖️ All content is derived from publicly available clinical literature and information. Always defer to your Stryker onboarding materials, manager guidance, and official Stryker training for product specifications and compliance requirements.
-        </div>
-      </div>
-    );
-  }
-
-  // ── MODULE GRID VIEW ──
-  const allCats = ['All',...new Set(DATA.trainingModules.map(m=>m.cat))];
-  const shown = filterCat==='All' ? DATA.trainingModules : DATA.trainingModules.filter(m=>m.cat===filterCat);
-  const completed = DATA.trainingModules.filter(m=>trainingProgress[m.id]?.completed).length;
-
+  const cc = catColor[active.cat] || 'var(--gold)';
+  const done = trainingProgress[active.id]?.completed;
   return (
-    <div className="fade-in" style={{padding:24,maxWidth:1100,margin:'0 auto'}}>
-      {/* Header */}
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12,marginBottom:8}}>
-        <div>
-          <div className="section-title">🎓 Training Hub</div>
-          <div style={{color:'#666',fontSize:13,marginTop:2}}>{completed} of {DATA.trainingModules.length} modules complete</div>
-        </div>
-        <div style={{textAlign:'right'}}>
-          <div style={{color:'var(--gold)',fontWeight:800,fontSize:22}}>{Math.round(pct())}%</div>
-          <div style={{fontSize:11,color:'#666'}}>Overall Progress</div>
-        </div>
-      </div>
-      <div style={{marginBottom:20}}><ProgressBar pct={pct()}/></div>
+    <div className="fade-up" style={{padding:24,maxWidth:800,margin:'0 auto'}}>
+      <button className="btn btn-ghost" onClick={backToModules} style={{marginBottom:20}}>
+        <Icon n='chev_right' s={14} c='var(--text2)' stroke={2}/> All Modules
+      </button>
 
-      {/* Category filter pills */}
-      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:24}}>
-        {allCats.map(c=>{
-          const cc = catColor[c] || 'var(--gold)';
-          const active = filterCat===c;
-          return (
-            <button key={c} onClick={()=>setFilterCat(c)}
-              style={{
-                padding:'6px 14px',borderRadius:20,fontSize:12,fontWeight:700,cursor:'pointer',
-                background: active?(c==='All'?'var(--gold)':`${cc}22`):'rgba(255,255,255,0.05)',
-                border: active?`1px solid ${c==='All'?'var(--gold)':cc}`:'1px solid rgba(255,255,255,0.1)',
-                color: active?(c==='All'?'#000':cc):'#888',
-                transition:'all 0.2s'
-              }}
-            >{c}</button>
-          );
-        })}
+      {/* Module header */}
+      <div className="glass" style={{padding:24,marginBottom:20,borderTop:`2px solid ${cc}`}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+          <div>
+            <span className="badge" style={{background:`${cc}18`,color:cc,border:`1px solid ${cc}33`,fontSize:10,marginBottom:10,display:'inline-block'}}>{active.cat}</span>
+            <div style={{fontWeight:800,fontSize:22,marginBottom:4,color:'var(--text)'}}>{active.title}</div>
+            <div style={{fontSize:13,color:'var(--text2)'}}>{active.dur} · {active.quiz.length} questions</div>
+          </div>
+          {done && <span className="badge badge-green">✓ Completed · {trainingProgress[active.id].score}/{trainingProgress[active.id].total||active.quiz.length}</span>}
+        </div>
+        <p style={{marginTop:14,color:'var(--text2)',fontSize:14,lineHeight:1.7}}>{active.desc}</p>
       </div>
 
-      {/* Module cards */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
-        {shown.map(m=>{
-          const p=prog(m);
-          const cc=catColor[m.cat]||'#F5A623';
-          return (
-            <div key={m.id} className="card"
-              style={{cursor:'pointer',position:'relative',borderTop:`2px solid ${cc}33`,transition:'border-color 0.2s'}}
-              onClick={()=>{setSelected(m);setView('lesson')}}
-              onMouseEnter={e=>e.currentTarget.style.borderTopColor=cc}
-              onMouseLeave={e=>e.currentTarget.style.borderTopColor=`${cc}33`}
-            >
-              {p.completed && <div style={{position:'absolute',top:12,right:12}}><Badge type="g" text="✓"/></div>}
-              <div style={{fontSize:10,fontWeight:700,color:cc,textTransform:'uppercase',letterSpacing:1,marginBottom:8}}>{m.cat}</div>
-              <div style={{fontWeight:800,fontSize:15,marginBottom:4,color:'#eee',paddingRight:p.completed?28:0}}>{m.title}</div>
-              <div style={{color:'#666',fontSize:12,marginBottom:10}}>
-                <span>⏱ {m.dur}</span>
-                <span style={{margin:'0 8px'}}>·</span>
-                <span>📝 {m.quiz.length} questions</span>
-              </div>
-              <p style={{fontSize:13,color:'#999',lineHeight:1.6,marginBottom:p.completed?10:0}}>{m.desc}</p>
-              {p.completed && (
-                <div style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#22c55e'}}>
-                  <span>✅ Score: {Math.round(p.score)}%</span>
-                </div>
-              )}
+      {/* Sections */}
+      {(active.sections||[]).map((sec,si)=>(
+        <div key={si} style={{marginBottom:24}}>
+          {sec.heading && (
+            <div style={{fontSize:15,fontWeight:800,color:cc,paddingBottom:10,marginBottom:14,borderBottom:'1px solid var(--border)',letterSpacing:.2}}>
+              {sec.heading}
             </div>
-          );
-        })}
+          )}
+          {sec.body && (
+            <div style={{fontSize:14,lineHeight:1.85,color:'var(--text)',whiteSpace:'pre-line',marginBottom:sec.svg||sec.videos?14:0}}>
+              {sec.body}
+            </div>
+          )}
+          {sec.svg && (
+            <div style={{margin:'16px 0',borderRadius:12,overflow:'hidden',border:'1px solid var(--border)'}}
+              dangerouslySetInnerHTML={{__html:sec.svg}}
+            />
+          )}
+          {sec.videos && sec.videos.length>0 && (
+            <div style={{marginTop:12}}>
+              <div style={{fontSize:12,fontWeight:700,color:'var(--gold)',marginBottom:8,textTransform:'uppercase',letterSpacing:.5}}>🎬 Watch & Learn</div>
+              {sec.videos.map((v,vi)=>(
+                <a key={vi} href={v.url} target="_blank" rel="noopener noreferrer"
+                  style={{display:'flex',alignItems:'center',gap:12,padding:'10px 14px',background:'rgba(0,212,255,.05)',border:'1px solid rgba(0,212,255,.15)',borderRadius:10,textDecoration:'none',color:'var(--text)',fontSize:13,marginBottom:8}}>
+                  <span style={{color:'var(--teal)',fontSize:16}}>▶</span>
+                  <span style={{flex:1}}>{v.title}</span>
+                  <span style={{fontSize:11,color:'var(--teal)'}}>Open →</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Quiz launch */}
+      <div className="glass" style={{padding:20,marginTop:24,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:16,border:`1px solid ${cc}44`}}>
+        <div>
+          <div style={{fontWeight:800,fontSize:16,color:'var(--gold)',marginBottom:4}}>Knowledge Check</div>
+          <div style={{fontSize:13,color:'var(--text2)'}}>{active.quiz.length} questions · 70% to pass</div>
+          {done && <div style={{fontSize:12,color:'var(--green)',marginTop:4}}>Last score: {trainingProgress[active.id].score}/{trainingProgress[active.id].total||active.quiz.length}</div>}
+        </div>
+        <button className="btn btn-gold" onClick={startQuiz}>
+          {done ? 'Retake Quiz' : 'Start Quiz →'}
+        </button>
       </div>
 
-      <div style={{marginTop:28,padding:14,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,fontSize:12,color:'#666',lineHeight:1.6}}>
-        ⚖️ All training content is derived from publicly available clinical literature and information. Always defer to your Stryker onboarding materials, manager guidance, and official Stryker training for product specifications and compliance requirements.
+      <div style={{marginTop:20,padding:12,background:'rgba(255,255,255,.03)',border:'1px solid var(--border)',borderRadius:10,fontSize:11,color:'var(--text3)',lineHeight:1.6}}>
+        ⚖️ All content is derived from publicly available clinical literature. Always defer to official Stryker training materials and your manager.
       </div>
     </div>
   );
 }
 
+
+// ── INTEL REPORT ─────────────────────────────────────────────────────────────
 function IntelReport() {
   const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const d = today();
